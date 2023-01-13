@@ -108,7 +108,7 @@
       <AdditionalIncludeDirectories>C:\IT\SFML-2.5.1-windows-vc15-64-bit\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\IT\SFML-2.5.1-windows-vc15-64-bit\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-audio-d.lib;sfml-system-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -136,6 +136,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -151,6 +153,8 @@
     <None Include="sfml-window-d-2.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.h" />
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="GameMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
