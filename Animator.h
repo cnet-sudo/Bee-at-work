@@ -44,7 +44,7 @@ public:
 		}
 	};
 
-	Animator(sf::Sprite & sprite);
+	explicit Animator(sf::Sprite & sprite);
 
 	Animator::Animation& CreateAnimation(std::string const& name,
 		std::string const& textureName, sf::Time const& duration, bool loop = false

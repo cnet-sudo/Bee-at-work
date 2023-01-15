@@ -1,6 +1,6 @@
 #include "Animator.h"
 
-Animator::Animator(sf::Sprite& sprite):m_Sprite(sprite), m_CurrentTime(),m_CurrentAnimation(nullptr)
+Animator::Animator(sf::Sprite& sprite): m_CurrentAnimation(nullptr), m_Sprite(sprite)
 {
 
 }
@@ -8,7 +8,7 @@ Animator::Animator(sf::Sprite& sprite):m_Sprite(sprite), m_CurrentTime(),m_Curre
 Animator::Animation& Animator::CreateAnimation(std::string const& name, std::string const& textureName, sf::Time const& duration, bool loop)
 {
 	
-	m_Animations.push_back(Animator::Animation(name,textureName,duration,loop));
+	m_Animations.emplace_back(name,textureName,duration,loop);
 
 	//если у нас нет следующей анимаций, используйте текущую анимацию
 	if (m_CurrentAnimation == nullptr) SwitchAnimation(& m_Animations.back());
@@ -19,7 +19,7 @@ void Animator::SwitchAnimation(Animator::Animation* animation)
 {
 	//Изменяем текстуру спрайта
 	if (animation != nullptr)
-	{	
+	{		
 		m_Sprite.setTexture(AssetManager::GetTexture(animation->m_TextureName));
 	}
 	
@@ -33,8 +33,8 @@ void Animator::Update(sf::Time const& dt)
 	m_CurrentTime += dt;
 
 	float scaledTime = (m_CurrentTime.asSeconds()/m_CurrentAnimation->m_Duration.asSeconds());
-	int numFrames = m_CurrentAnimation->m_Frames.size();
-	int currentFrame = static_cast<int>(scaledTime*numFrames);
+	auto numFrames = static_cast<int>(m_CurrentAnimation->m_Frames.size());
+	auto currentFrame = static_cast<int>(scaledTime*numFrames);
 
 	if (m_CurrentAnimation->m_Looping) currentFrame %= numFrames;
 	else
