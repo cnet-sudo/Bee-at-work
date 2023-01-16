@@ -57,6 +57,12 @@ public:
 
 	std::string GetCurrentAnimationName() const;
 
+	void restart();
+
+	bool getEndAnim() const
+	{
+		return endAnim;
+	}
 private:
 
 	// введите имя анимации
@@ -70,6 +76,6 @@ private:
 	sf::Time m_CurrentTime;
 	std::list<Animator::Animation> m_Animations;
 	Animator::Animation* m_CurrentAnimation;
-
+	bool endAnim = false;
 };
 

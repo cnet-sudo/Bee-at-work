@@ -38,7 +38,7 @@ void Animator::Update(sf::Time const& dt)
 
 	if (m_CurrentAnimation->m_Looping) currentFrame %= numFrames;
 	else
-		if (currentFrame >= numFrames) currentFrame = numFrames - 1;
+		if (currentFrame >= numFrames) { currentFrame = numFrames - 1; endAnim = true; }
 
 	m_Sprite.setTextureRect(m_CurrentAnimation->m_Frames[currentFrame]);
 
@@ -62,7 +62,13 @@ std::string Animator::GetCurrentAnimationName() const
 	return "";
 }
 
-Animator::Animation* Animator::FindAnimation(std::string const& name)
+void Animator::restart()
+{
+	m_CurrentTime = sf::Time::Zero; // —бросит врем€
+	endAnim = false;
+}
+
+Animator::Animation* Animator::FindAnimation(std::string const & name)
 {
 	for (auto it=m_Animations.begin();it!=m_Animations.end();++it) 
 	{
