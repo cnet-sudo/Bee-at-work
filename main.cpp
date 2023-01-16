@@ -47,7 +47,7 @@ int main()
     // Анимация брызг
     Vector2i SplashSize(100, 50);
     Sprite Splash;
-    Splash.setOrigin(50, 25);
+    Splash.setOrigin(50,-20);
     Animator SplashAnim(Splash);
     auto& idleSplash = SplashAnim.CreateAnimation("idleSplash", "image/maker.png", seconds(1), false);
     idleSplash.AddFrames(Vector2i(0, 0), SplashSize, 5, 1);
@@ -131,20 +131,22 @@ int main()
          {
              BeeTime = milliseconds(0);
              
-             if (!diedBee) BeeSprite.move(stepx, stepy); 
+             if (!diedBee ) BeeSprite.move(stepx, stepy);
              else 
              {
-                
+                 if (SplashAnim.getEndAnim()) {
+                 BeeSprite.setRotation(90);
                  BeeSprite.move(0, 7);
                  if (BeeSprite.getPosition().y > 700) { BeeSprite.setPosition(100, 350); 
                  diedBee = false; 
                  BeeSprite.setRotation(0);
                  BeeAnim.SwitchAnimation("idleForward");
                  }
+                 }
              }     
             for (size_t i = 0; i < size(blob); i++)
              {
-                 blob[i].move(0,5);
+                 blob[i].move(0,3);
                  if (blob[i].getPosition().y > 720) 
                  {blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                  blodSize = static_cast<float>(RndPosBlobSize(rnd));
@@ -154,11 +156,12 @@ int main()
                  if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds())&& !diedBee)
                  {
                      Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
-                     blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
-                     blodSize = static_cast<float>(RndPosBlobSize(rnd));
+                     SplashAnim.restart();
+                         blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
+                         blodSize = static_cast<float>(RndPosBlobSize(rnd));
                          blob[i].setSize(Vector2f(10 * blodSize, 20 * blodSize));
                          diedBee = true;
-                         BeeSprite.setRotation(90);
+                         
                  }
              }
          }
