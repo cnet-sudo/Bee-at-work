@@ -44,5 +44,15 @@ namespace game {
 
 
 	};
+    
+	struct TextFormat
+	{
+		int size_font = 100;
+		float bord = 3.0f;
+		sf::Color menu_text_color = sf::Color::Yellow;
+		sf::Color border_color = sf::Color::Black;
+	};
+
+	void InitText(sf::Text& mtext, float xpos, float ypos, const sf::String& str, TextFormat Ftext);
 
 }

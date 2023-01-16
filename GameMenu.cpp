@@ -101,3 +101,14 @@ void game::GameMenu::setColorTextMenu(sf::Color menColor, sf::Color ChoColor, sf
 
 	mainMenu[mainMenuSelected].setFillColor(chose_text_color);
 }
+
+void game::InitText(sf::Text& mtext, float xpos, float ypos, const sf::String& str, game::TextFormat Ftext)
+{
+	mtext.setCharacterSize(Ftext.size_font);
+	mtext.setPosition(xpos, ypos);
+	mtext.setString(str);
+	mtext.setFillColor(Ftext.menu_text_color);
+	mtext.setOutlineThickness(Ftext.bord);
+	mtext.setOutlineColor(Ftext.border_color);
+}
+

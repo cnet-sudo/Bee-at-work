@@ -8,16 +8,6 @@
 using namespace sf;
 using namespace std;
 
-struct TextFormat
-{
-    int size_font = 100;
-    float bord = 3.0f;
-    Color menu_text_color = Color::Yellow;
-    Color border_color = Color::Black;
-};
-
-void InitText(Text& mtext, float xpos, float ypos, const String& str, TextFormat Ftext);
-
 void Options();
 
 void About_Game();
@@ -28,7 +18,7 @@ void GamåMenu();
 int main()
 {   
     GamåMenu();
-
+    AssetManager manager;
     long long null_number = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine rnd(static_cast<unsigned int>(null_number));
     uniform_int_distribution RndPosBlobX(350, 900);
@@ -54,6 +44,14 @@ int main()
         blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd)*-1));
     }
     
+    // Àíèìàöèÿ áðûçã
+    Vector2i SplashSize(100, 50);
+    Sprite Splash;
+    Splash.setOrigin(50, 25);
+    Animator SplashAnim(Splash);
+    auto& idleSplash = SplashAnim.CreateAnimation("idleSplash", "image/maker.png", seconds(1), false);
+    idleSplash.AddFrames(Vector2i(0, 0), SplashSize, 5, 1);
+
     Vector2i spriteSize(117,119);
     Sprite BeeSprite;
     BeeSprite.setOrigin(50,50);
@@ -126,7 +124,7 @@ int main()
             }           
         }
          Time deltaTime = clock.restart();   
-        
+         if (diedBee) SplashAnim.Update(deltaTime);
          BeeTime += deltaTime;
 
          if (BeeTime > milliseconds(20))
@@ -136,6 +134,7 @@ int main()
              if (!diedBee) BeeSprite.move(stepx, stepy); 
              else 
              {
+                
                  BeeSprite.move(0, 7);
                  if (BeeSprite.getPosition().y > 700) { BeeSprite.setPosition(100, 350); 
                  diedBee = false; 
@@ -154,6 +153,7 @@ int main()
 
                  if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds())&& !diedBee)
                  {
+                     Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
                      blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                      blodSize = static_cast<float>(RndPosBlobSize(rnd));
                          blob[i].setSize(Vector2f(10 * blodSize, 20 * blodSize));
@@ -178,6 +178,7 @@ int main()
         {
             Play.draw(blob[i]);
         }
+        Play.draw(Splash);
         Play.display();
     }
     return 0;
@@ -208,7 +209,7 @@ void GamåMenu()
         std::cout << "No font is here";
     }
     Titul.setFont(font);
-    TextFormat FText;
+    game::TextFormat FText;
     FText.menu_text_color = Color(227, 171, 0);
     InitText(Titul, 270, 5, L"Ï÷åëà íà ðàáîòå", FText);
 
@@ -302,14 +303,5 @@ void About_Game()
 }
 
 
-void InitText(Text& mtext, float xpos, float ypos, const String& str, TextFormat Ftext)
-{
-    mtext.setCharacterSize(Ftext.size_font);
-    mtext.setPosition(xpos, ypos);
-    mtext.setString(str);
-    mtext.setFillColor(Ftext.menu_text_color);
-    mtext.setOutlineThickness(Ftext.bord);
-    mtext.setOutlineColor(Ftext.border_color);
 
-}
 
