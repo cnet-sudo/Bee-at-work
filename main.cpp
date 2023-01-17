@@ -1,5 +1,6 @@
 #include"GameMenu.h"
 #include"Animator.h"
+#include "HealthBarClass.h"
 #include<iostream>
 #include<chrono>
 #include<random>
@@ -25,50 +26,29 @@ int main()
     uniform_int_distribution RndPosBlobY(0, 1000);
     uniform_int_distribution RndPosBlobSize(1, 3);
     
-    RenderWindow Play(VideoMode(1280, 720), L"Игра", Style::Fullscreen);
+    RenderWindow Play(VideoMode(1280, 720), L"Игра", Style::Default);
 
-    
     CircleShape flowers(50);
     flowers.setPosition(1050, 230);
     flowers.setFillColor(Color(255,255,255,0));
 
-    RectangleShape barFlowers(Vector2f(25,0));
-    barFlowers.setPosition(1150, 330);
-    barFlowers.setFillColor(Color(156, 255, 0));
-    bool mead=false;
-    float sizeBar = 0.0f;
-    RectangleShape barFlowers2(Vector2f(25, 100));
-    barFlowers2.setPosition(1150, 230);
-    barFlowers2.setFillColor(Color(255, 255, 255,0));
-    barFlowers2.setOutlineColor(Color(255, 111, 0));
-    barFlowers2.setOutlineThickness(3);
-
+    HealthBarClass barFlow(Play, 1150, 330, true);
+    barFlow.setColorBar(Color(0, 189, 0), Color(158, 63, 25), 3);
+    bool mead=false;  // Наполнение корзинки мёдом
+    
     CircleShape beehive(30);
     beehive.setPosition(50, 340);
     beehive.setFillColor(Color(255, 255, 255, 0));
 
-    RectangleShape barBeehive(Vector2f(25, 0));
-    barBeehive.setPosition(250, 430);
-    barBeehive.setFillColor(Color(255, 187, 0));
+
+    HealthBarClass barBeehive(Play, 250, 430, true);
+    barBeehive.setColorBar(Color(216, 212, 0), Color(189, 116, 0), 3);
+    HealthBarClass barBeehive2(Play, 240, 430, true,0.0f,10);
+    barBeehive2.setColorBar(Color(0, 189, 0), Color(189, 116, 0), 3);
+        
     float sizeBarBeehive = 0.0f;
     int nummead = 0;
-    RectangleShape barBeehive2(Vector2f(25, 100));
-    barBeehive2.setPosition(250, 330);
-    barBeehive2.setFillColor(Color(255, 255, 255, 0));
-    barBeehive2.setOutlineColor(Color::Yellow);
-    barBeehive2.setOutlineThickness(3);
-
-    RectangleShape barBeehive(Vector2f(25, 0));
-    barBeehive.setPosition(250, 430);
-    barBeehive.setFillColor(Color(255, 187, 0));
     
-    RectangleShape barBeehive3(Vector2f(25, 100));
-    barBeehive3.setPosition(250, 330);
-    barBeehive3.setFillColor(Color(255, 255, 255, 0));
-    barBeehive3.setOutlineColor(Color::Yellow);
-    barBeehive3.setOutlineThickness(3);
-
-
     RectangleShape background_play(Vector2f(1280, 720));
     Texture backgroundgame;
     backgroundgame.loadFromFile("image/background.jpg");
@@ -166,9 +146,27 @@ int main()
             }           
         }
          Time deltaTime = clock.restart();   
+         
          if (diedBee) SplashAnim.Update(deltaTime);
-         BeeTime += deltaTime;
+         
+         if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !mead)
+         {
+            barFlow.increaseOfsize(1, deltaTime);
+            if (barFlow.getFull()) { mead = true; barFlow.reset(); }
+         }
+         if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && barFlow.getSizeBar() != 0) barFlow.reset();
+       
+         if (mead && BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+        {
+             if (barBeehive2.getFull()) 
+             {
+                 barBeehive.increaseOfsize(10); mead = false; barBeehive2.reset();
+             } 
+             else barBeehive2.increaseOfsize(1, deltaTime);
+        }
 
+         
+         BeeTime += deltaTime;
          if (BeeTime > milliseconds(20))
          {
              BeeTime = milliseconds(0);
@@ -188,7 +186,7 @@ int main()
              }     
             for (size_t i = 0; i < size(blob); i++)
              {
-                 blob[i].move(0,3);
+                 //blob[i].move(0,3);
                  if (blob[i].getPosition().y > 720) 
                  {blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                  blodSize = static_cast<float>(RndPosBlobSize(rnd));
@@ -202,19 +200,12 @@ int main()
                          blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                          blodSize = static_cast<float>(RndPosBlobSize(rnd));
                          blob[i].setSize(Vector2f(10 * blodSize, 20 * blodSize));
-                         diedBee = true;
-                         
+                         diedBee = true;                       
                  }
              }
 
-            if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !mead)
-            {
-                barFlowers.setSize(Vector2f(barFlowers.getSize().x, sizeBar));
-                sizeBar -=1;
-                if (sizeBar <-100) { sizeBar = 0; mead = true;}
-            }
          }
-         if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && sizeBar != 0) sizeBar = 0;
+         
         
 
         if (!diedBee){
@@ -225,26 +216,19 @@ int main()
          if (BeeSprite.getPosition().y > 620 ) { BeeSprite.setPosition(BeeSprite.getPosition().x, 620); }
                     }
  
-        if (mead && BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
-        {
-            sizeBarBeehive -= 10; mead = false; nummead++;
-            if (sizeBarBeehive < -100) sizeBarBeehive = -100;
-            barBeehive.setSize(Vector2f(barBeehive.getSize().x, sizeBarBeehive));
-        }
+        
 
         Play.clear();
         Play.draw(background_play);
         Play.draw(flowers);
         Play.draw(beehive);
-       
-        if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) 
-        {Play.draw(barFlowers);
-        Play.draw(barFlowers2);
-        }
+        
+        if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) barFlow.draw();
+        
         if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
         {
-            Play.draw(barBeehive);
-            Play.draw(barBeehive2);
+            barBeehive.draw();
+            barBeehive2.draw();
         }
 
         Play.draw(BeeSprite);
@@ -253,6 +237,8 @@ int main()
             Play.draw(blob[i]);
         }
         if (diedBee) Play.draw(Splash);
+
+        
         Play.display();
     }
     return 0;
@@ -261,7 +247,7 @@ int main()
 void GamеMenu()
 {
 
-    RenderWindow window(VideoMode(1280, 720), L"Пчела на работе", Style::Fullscreen);
+    RenderWindow window(VideoMode(1280, 720), L"Пчела на работе", Style::Default);
     window.setMouseCursorVisible(false);
 
     std::vector<String> name_menu{ { L"Старт",L"Настройки", L"О игре",L"Выход" } };
