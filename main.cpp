@@ -27,6 +27,39 @@ int main()
     
     RenderWindow Play(VideoMode(1280, 720), L"Èãðà", Style::Fullscreen);
 
+    
+    CircleShape flowers(50);
+    flowers.setPosition(1050, 230);
+    flowers.setFillColor(Color(255,255,255,100));
+
+    RectangleShape barFlowers(Vector2f(25,0));
+    barFlowers.setPosition(1150, 330);
+    barFlowers.setFillColor(Color(156, 255, 0));
+    bool mead=false;
+    float sizeBar = 0.0f;
+    RectangleShape barFlowers2(Vector2f(25, 100));
+    barFlowers2.setPosition(1150, 230);
+    barFlowers2.setFillColor(Color(255, 255, 255,0));
+    barFlowers2.setOutlineColor(Color(255, 111, 0));
+    barFlowers2.setOutlineThickness(3);
+
+    CircleShape beehive(30);
+    beehive.setPosition(50, 340);
+    beehive.setFillColor(Color(255, 255, 255, 100));
+
+    RectangleShape barBeehive(Vector2f(25, 0));
+    barBeehive.setPosition(250, 430);
+    barBeehive.setFillColor(Color(255, 187, 0));
+    float sizeBarBeehive = 0.0f;
+    int nummead = 0;
+    RectangleShape barBeehive2(Vector2f(25, 100));
+    barBeehive2.setPosition(250, 330);
+    barBeehive2.setFillColor(Color(255, 255, 255, 0));
+    barBeehive2.setOutlineColor(Color::Yellow);
+    barBeehive2.setOutlineThickness(3);
+
+
+
     RectangleShape background_play(Vector2f(1280, 720));
     Texture backgroundgame;
     backgroundgame.loadFromFile("image/background.jpg");
@@ -50,17 +83,17 @@ int main()
     Splash.setOrigin(50,-20);
     Animator SplashAnim(Splash);
     auto& idleSplash = SplashAnim.CreateAnimation("idleSplash", "image/maker.png", seconds(1), false);
-    idleSplash.AddFrames(Vector2i(0, 0), SplashSize, 5, 1);
+    idleSplash.AddFrames(Vector2i(0, 0), SplashSize, 6, 1);
 
-    Vector2i spriteSize(117,119);
+    Vector2i spriteSize(100,100);
     Sprite BeeSprite;
     BeeSprite.setOrigin(50,50);
-    BeeSprite.setPosition(100, 350);
+    BeeSprite.setPosition(90, 365);
     Animator BeeAnim(BeeSprite);
     auto& idleForward = BeeAnim.CreateAnimation("idleForward","image/SPRITESHEET.png",seconds(1),true);
     idleForward.AddFrames(Vector2i(0,0), spriteSize,6,1);
     auto& idleBack = BeeAnim.CreateAnimation("idleBack", "image/SPRITESHEET.png", seconds(1), true);
-    idleBack.AddFrames(Vector2i(0,120), spriteSize,6,1);
+    idleBack.AddFrames(Vector2i(0,100), spriteSize,6,1);
     Clock clock;
     Time BeeTime;
     bool direction = true;
@@ -78,7 +111,7 @@ int main()
             case Event::KeyPressed:
                 if (event_play.key.code == Keyboard::Escape) { GamåMenu(); }
                 if (event_play.key.code == Keyboard::Right) {
-                    if (BeeSprite.getPosition().x < 1080) stepx = 5.0f;
+                    if (BeeSprite.getPosition().x < 1100) stepx = 5.0f;
                     if (!direction) {
                         BeeAnim.SwitchAnimation("idleForward"); direction = true;
                     }
@@ -92,11 +125,11 @@ int main()
                 }
 
                 if (event_play.key.code == Keyboard::Up) {
-                    if (BeeSprite.getPosition().y > 200) stepy = -5.0f;
+                    if (BeeSprite.getPosition().y > 100) stepy = -5.0f;
                 }
                 if (event_play.key.code == Keyboard::Down)
                 {
-                    if (BeeSprite.getPosition().y < 520) stepy = 5.0f;
+                    if (BeeSprite.getPosition().y < 620) stepy = 5.0f;
                 }
                 break;
             case Event::KeyReleased:
@@ -137,7 +170,7 @@ int main()
                  if (SplashAnim.getEndAnim()) {
                  BeeSprite.setRotation(90);
                  BeeSprite.move(0, 7);
-                 if (BeeSprite.getPosition().y > 700) { BeeSprite.setPosition(100, 350); 
+                 if (BeeSprite.getPosition().y > 720) { BeeSprite.setPosition(90, 365);
                  diedBee = false; 
                  BeeSprite.setRotation(0);
                  BeeAnim.SwitchAnimation("idleForward");
@@ -164,24 +197,53 @@ int main()
                          
                  }
              }
+
+            if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !mead)
+            {
+                barFlowers.setSize(Vector2f(barFlowers.getSize().x, sizeBar));
+                sizeBar -=1;
+                if (sizeBar <-100) { sizeBar = 0; mead = true;}
+            }
          }
-         
+         if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && sizeBar != 0) sizeBar = 0;
+        
+
         if (!diedBee){
             BeeAnim.Update(deltaTime);
          if (BeeSprite.getPosition().x < 50) { BeeSprite.setPosition(50, BeeSprite.getPosition().y); }
-         if (BeeSprite.getPosition().x > 1080) { BeeSprite.setPosition(1080, BeeSprite.getPosition().y); }
-         if (BeeSprite.getPosition().y < 200) { BeeSprite.setPosition(BeeSprite.getPosition().x, 200); }
-         if (BeeSprite.getPosition().y > 520 ) { BeeSprite.setPosition(BeeSprite.getPosition().x, 520); }
+         if (BeeSprite.getPosition().x > 1100) { BeeSprite.setPosition(1100, BeeSprite.getPosition().y); }
+         if (BeeSprite.getPosition().y < 100) { BeeSprite.setPosition(BeeSprite.getPosition().x, 100); }
+         if (BeeSprite.getPosition().y > 620 ) { BeeSprite.setPosition(BeeSprite.getPosition().x, 620); }
                     }
+ 
+        if (mead && BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+        {
+            sizeBarBeehive -= 10; mead = false; nummead++;
+            if (sizeBarBeehive < -100) sizeBarBeehive = -100;
+            barBeehive.setSize(Vector2f(barBeehive.getSize().x, sizeBarBeehive));
+        }
 
         Play.clear();
         Play.draw(background_play);
+        Play.draw(flowers);
+        Play.draw(beehive);
+       
+        if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) 
+        {Play.draw(barFlowers);
+        Play.draw(barFlowers2);
+        }
+        if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+        {
+            Play.draw(barBeehive);
+            Play.draw(barBeehive2);
+        }
+
         Play.draw(BeeSprite);
         for (size_t i = 0; i < size(blob); i++)
         {
             Play.draw(blob[i]);
         }
-        Play.draw(Splash);
+        if (diedBee) Play.draw(Splash);
         Play.display();
     }
     return 0;
