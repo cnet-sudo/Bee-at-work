@@ -30,7 +30,7 @@ int main()
     
     CircleShape flowers(50);
     flowers.setPosition(1050, 230);
-    flowers.setFillColor(Color(255,255,255,100));
+    flowers.setFillColor(Color(255,255,255,0));
 
     RectangleShape barFlowers(Vector2f(25,0));
     barFlowers.setPosition(1150, 330);
@@ -45,7 +45,7 @@ int main()
 
     CircleShape beehive(30);
     beehive.setPosition(50, 340);
-    beehive.setFillColor(Color(255, 255, 255, 100));
+    beehive.setFillColor(Color(255, 255, 255, 0));
 
     RectangleShape barBeehive(Vector2f(25, 0));
     barBeehive.setPosition(250, 430);
@@ -58,6 +58,15 @@ int main()
     barBeehive2.setOutlineColor(Color::Yellow);
     barBeehive2.setOutlineThickness(3);
 
+    RectangleShape barBeehive(Vector2f(25, 0));
+    barBeehive.setPosition(250, 430);
+    barBeehive.setFillColor(Color(255, 187, 0));
+    
+    RectangleShape barBeehive3(Vector2f(25, 100));
+    barBeehive3.setPosition(250, 330);
+    barBeehive3.setFillColor(Color(255, 255, 255, 0));
+    barBeehive3.setOutlineColor(Color::Yellow);
+    barBeehive3.setOutlineThickness(3);
 
 
     RectangleShape background_play(Vector2f(1280, 720));
