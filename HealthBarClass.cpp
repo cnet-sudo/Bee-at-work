@@ -6,7 +6,7 @@ void HealthBarClass::draw()
 	mywindow.draw(container);	
 }
 
-void HealthBarClass::increaseOfsize(float size, sf::Time const& dt)
+void HealthBarClass::changeOfbar(float size, sf::Time const& dt)
 {
     if (!full) {
     m_duration += dt;
@@ -17,32 +17,68 @@ void HealthBarClass::increaseOfsize(float size, sf::Time const& dt)
 
         if (vert)
         {
-            if (sizeBar > -100) sizeBar += size*-1; else full = true;
-            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar));
+            sizeBar += size;
+            if (size > 0)
+            {
+                if (sizeBar >= 100) { sizeBar = 100; full = true; }
+                barHelth.setOrigin(0, sizeBar * divisionUnit);
+                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            }
+            else
+            {
+                if (sizeBar <= 0) { empty = true; sizeBar = 0; }
+                barHelth.setOrigin(0, sizeBar * divisionUnit);
+                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            }
         }
         else
         {
-            if (sizeBar < 100) sizeBar += size; else full = true;
-            barHelth.setSize(sf::Vector2f(sizeBar, thicknessBar));
+            if (size > 0)
+            {
+                if (sizeBar >= 100) { sizeBar = 100; full = true; }
+                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            }
+            else
+            {
+                if (sizeBar <= 0) { empty = true; sizeBar = 0; }
+                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            }
         }
     }
    }
 }
 
-void HealthBarClass::increaseOfsize(float size)
+void HealthBarClass::changeOfbar(float size)
 {
-    if (!full) {
-        if (vert)
-        {
-            if (sizeBar > -100) sizeBar += size * -1; else full = true;
-            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar));
+    if (vert)
+    {   sizeBar += size;
+        if (size > 0)
+        {    
+            if (sizeBar >= 100) { sizeBar = 100; full = true; } 
+            barHelth.setOrigin(0, sizeBar * divisionUnit);
+            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
         }
         else
         {
-            if (sizeBar < 100) sizeBar += size; else full = true;
-            barHelth.setSize(sf::Vector2f(sizeBar, thicknessBar));
+            if (sizeBar <= 0) {empty = true; sizeBar = 0;}
+            barHelth.setOrigin(0, sizeBar * divisionUnit);
+            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
         }
     }
+    else
+    {
+        if (size > 0)
+        {
+            if (sizeBar >= 100) { sizeBar = 100; full = true; }
+            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+        }
+        else
+        {
+            if (sizeBar <= 0) { empty = true; sizeBar = 0; }
+            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+        }
+    }
+
 }
 
 void HealthBarClass::setColorBar(sf::Color ColorHelth, sf::Color ColorContainer, float Thickness) 
@@ -52,15 +88,34 @@ void HealthBarClass::setColorBar(sf::Color ColorHelth, sf::Color ColorContainer,
     container.setOutlineThickness(Thickness);
 }
 
+
+
 void HealthBarClass::reset() 
 {
-    sizeBar = 0.0f;
+    sizeBar = resetBar;
     full = false;
-    barHelth.setSize(sf::Vector2f(sizeBar, thicknessBar));
+    if (vert)
+    {
+        barHelth.setOrigin(0, sizeBar* divisionUnit);
+        barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar* divisionUnit));
+    }
+    else
+    {
+        barHelth.setSize(sf::Vector2f(sizeBar* divisionUnit, thicknessBar));
+    }
 }
 
 void HealthBarClass::setSizeBar(float size)
 {
     sizeBar = size;
-    barHelth.setSize(sf::Vector2f(sizeBar, thicknessBar));
+    
+    if (vert)
+    {
+        barHelth.setOrigin(0, sizeBar* divisionUnit);
+        barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar* divisionUnit));
+    }
+    else
+    {
+        barHelth.setSize(sf::Vector2f(sizeBar* divisionUnit,thicknessBar));
+    }
 }

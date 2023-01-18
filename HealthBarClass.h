@@ -16,12 +16,16 @@ class HealthBarClass
     float thicknessBar;           // Толщина
     float divisionUnit;           // Масштаб полосы
     bool full=false;              // Наполнение
-
+    bool empty=true;              // Наполнение
+    float resetBar;
 public:
 
     HealthBarClass(sf::RenderWindow & window, float x, float y, bool vertical, float sizeBar = 0.0f, float thicknessBar = 25.0f, float divisionUnit=1.0f)
         :mywindow(window),xpos(x),ypos(y), vert(vertical), sizeBar(sizeBar), thicknessBar(thicknessBar), divisionUnit(divisionUnit)
     {
+        if (sizeBar > 0) empty = false;
+        if (sizeBar == 100) full = true;
+        resetBar = sizeBar;
         barHelth.setPosition(xpos, ypos);
         barHelth.setFillColor(sf::Color::Red);
         container.setPosition(xpos, ypos);
@@ -31,8 +35,10 @@ public:
 
         if (vert) 
         {
-        barHelth.setSize(sf::Vector2f(thicknessBar, 0));
-        container.setSize(sf::Vector2f(thicknessBar, -100*divisionUnit));
+        barHelth.setOrigin(0, sizeBar * divisionUnit);
+        barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar* divisionUnit));
+        container.setOrigin(0, 100* divisionUnit);
+        container.setSize(sf::Vector2f(thicknessBar, 100 * divisionUnit));
         }
         else
         {
@@ -41,18 +47,23 @@ public:
         }
     };
 
-    bool getFull() 
+    bool getFull() const
     {
         return full;
     }
-    float getSizeBar() {
+    bool getEmpty() const
+    {
+        return empty;
+    }
+    float getSizeBar() const {
     return sizeBar;
      }
-    void increaseOfsize(float size, sf::Time const& dt);   // Изменение наполнения полосы
+
+    void changeOfbar(float size, sf::Time const& dt);   // Изменение наполнения полосы
+    void changeOfbar(float size);
     void draw();                                         // Рисования полосы жизни
     void setColorBar(sf::Color ColorHelth, sf::Color ColorContainer, float Thickness);  // Установка цвета
     void setSizeBar(float size);
-    void increaseOfsize(float size);
     void reset();
 };
 
