@@ -5,6 +5,8 @@
 #include<chrono>
 #include<random>
 #include<array>
+#include<Windows.h>
+#include<SFML/Audio.hpp>
 
 using namespace sf;
 using namespace std;
@@ -15,10 +17,47 @@ void About_Game();
 
 void GamеMenu();
 
+bool GamеEndMenu(RenderWindow & window, RectangleShape & bacground, String str, Color col);
+
 
 int main()
 {   
     GamеMenu();
+    SoundBuffer buffer;
+    if (  !buffer.loadFromFile("sound/d.wav")) return -1;
+    Sound sound;
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.play();
+
+    SoundBuffer bufferU;
+    if ( !bufferU.loadFromFile("sound/u.wav")) return -1;
+    Sound soundU;
+    soundU.setBuffer(bufferU);
+    soundU.setLoop(true);
+
+    SoundBuffer bufferS;
+    if (!bufferS.loadFromFile("sound/s.wav")) return -1;
+    Sound soundS;
+    soundS.setBuffer(bufferS);
+    soundS.setLoop(true);
+
+    SoundBuffer bufferZ;
+    if (!bufferZ.loadFromFile("sound/z.wav")) return -1;
+    Sound soundZ;
+    soundZ.setBuffer(bufferZ);
+
+    SoundBuffer bufferSVS;
+    if (!bufferSVS.loadFromFile("sound/svs.wav")) return -1;
+    Sound soundSVS;
+    soundSVS.setBuffer(bufferSVS);
+
+    SoundBuffer bufferSH;
+    if (!bufferSH.loadFromFile("sound/sh.wav")) return -1;
+    Sound soundSH;
+    soundSH.setBuffer(bufferSH);
+
+
     AssetManager manager;
     long long null_number = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine rnd(static_cast<unsigned int>(null_number));
@@ -26,7 +65,8 @@ int main()
     uniform_int_distribution RndPosBlobY(0, 1000);
     uniform_int_distribution RndPosBlobSize(1, 3);
     
-    RenderWindow Play(VideoMode(1280, 720), L"Игра", Style::Default);
+    RenderWindow Play(VideoMode(1280, 720), L"Игра", Style::Fullscreen);
+    Play.setMouseCursorVisible(false);
 
     CircleShape flowers(50);
     flowers.setPosition(1050, 230);
@@ -41,14 +81,16 @@ int main()
     beehive.setFillColor(Color(255, 255, 255, 0));
 
 
-    HealthBarClass barBeehive(Play, 250, 430, true);
+    HealthBarClass barBeehive(Play, 250, 430, true,30);   // Количество мёда в улии
     barBeehive.setColorBar(Color(216, 212, 0), Color(189, 116, 0), 3);
     HealthBarClass barBeehive2(Play, 240, 430, true,0.0f,10);
     barBeehive2.setColorBar(Color(0, 189, 0), Color(189, 116, 0), 3);
-        
-    float sizeBarBeehive = 0.0f;
-    int nummead = 0;
     
+    RectangleShape beemead(Vector2f(50, 50));
+    Texture beemeadtexture;
+    beemeadtexture.loadFromFile("image/mead.png");
+    beemead.setTexture(&beemeadtexture);
+
     RectangleShape background_play(Vector2f(1280, 720));
     Texture backgroundgame;
     backgroundgame.loadFromFile("image/background.jpg");
@@ -96,9 +138,9 @@ int main()
         {
             switch (event_play.type)
             {
-            case Event::Closed:Play.close(); break;
             case Event::KeyPressed:
-                if (event_play.key.code == Keyboard::Escape) { GamеMenu(); }
+                if (event_play.key.code == Keyboard::Escape) { sound.stop(); GamеMenu(); sound.play();
+                }
                 if (event_play.key.code == Keyboard::Right) {
                     if (BeeSprite.getPosition().x < 1100) stepx = 5.0f;
                     if (!direction) {
@@ -151,7 +193,7 @@ int main()
          
          if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !mead)
          {
-            barFlow.increaseOfsize(1, deltaTime);
+            barFlow.changeOfbar(1, deltaTime);
             if (barFlow.getFull()) { mead = true; barFlow.reset(); }
          }
          if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && barFlow.getSizeBar() != 0) barFlow.reset();
@@ -160,9 +202,24 @@ int main()
         {
              if (barBeehive2.getFull()) 
              {
-                 barBeehive.increaseOfsize(10); mead = false; barBeehive2.reset();
+                 mead = false; 
+                 if (soundZ.getStatus() == SoundSource::Status::Playing) soundZ.stop();
+                 barBeehive2.reset();
+                 barBeehive.changeOfbar(10);
+                 if (barBeehive.getFull())
+                 { sound.stop();
+                   if (soundU.getStatus() == SoundSource::Status::Playing) soundU.stop();
+                     if (GamеEndMenu(Play, background_play, L"Вы выиграли !!!", Color::Magenta))
+                     {
+                         barBeehive.reset();
+                         diedBee = false;
+                         BeeSprite.setPosition(90, 365);
+                         sound.play();
+                     }
+                     else Play.close();
+                 }
              } 
-             else barBeehive2.increaseOfsize(1, deltaTime);
+             else { barBeehive2.changeOfbar(1, deltaTime); if (soundZ.getStatus() == SoundSource::Status::Stopped) soundZ.play();}
         }
 
          
@@ -177,7 +234,22 @@ int main()
                  if (SplashAnim.getEndAnim()) {
                  BeeSprite.setRotation(90);
                  BeeSprite.move(0, 7);
-                 if (BeeSprite.getPosition().y > 720) { BeeSprite.setPosition(90, 365);
+                 if (soundSVS.getStatus() == SoundSource::Status::Stopped) soundSVS.play();
+                 if (BeeSprite.getPosition().y > 720) { 
+                     if (soundSVS.getStatus() == SoundSource::Status::Playing) soundSVS.stop();
+                 if (barBeehive.getSizeBar() == 0)
+                 {
+                     sound.stop();
+                     if (GamеEndMenu(Play, background_play, L"Вы проиграли !!!", Color::Red))
+                     {
+                         sound.play();
+                         barBeehive.reset();
+                         diedBee = false;
+                         BeeSprite.setPosition(90, 365);
+                     }
+                     else Play.close();
+                 }
+                 BeeSprite.setPosition(90, 365);
                  diedBee = false; 
                  BeeSprite.setRotation(0);
                  BeeAnim.SwitchAnimation("idleForward");
@@ -186,7 +258,7 @@ int main()
              }     
             for (size_t i = 0; i < size(blob); i++)
              {
-                 //blob[i].move(0,3);
+                 blob[i].move(0,3);
                  if (blob[i].getPosition().y > 720) 
                  {blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                  blodSize = static_cast<float>(RndPosBlobSize(rnd));
@@ -195,18 +267,19 @@ int main()
 
                  if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds())&& !diedBee)
                  {
+                     if (soundSH.getStatus() == SoundSource::Status::Stopped) soundSH.play();
                      Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
                      SplashAnim.restart();
                          blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
                          blodSize = static_cast<float>(RndPosBlobSize(rnd));
                          blob[i].setSize(Vector2f(10 * blodSize, 20 * blodSize));
-                         diedBee = true;                       
+                         diedBee = true; mead = false;
+                         if (barBeehive.getSizeBar()>=10) barBeehive.changeOfbar(-10);
                  }
              }
 
          }
-         
-        
+            
 
         if (!diedBee){
             BeeAnim.Update(deltaTime);
@@ -217,6 +290,7 @@ int main()
                     }
  
         
+        beemead.setPosition(BeeSprite.getPosition().x-20, BeeSprite.getPosition().y + 40);
 
         Play.clear();
         Play.draw(background_play);
@@ -225,32 +299,107 @@ int main()
         
         if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) barFlow.draw();
         
-        if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+        if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) 
         {
-            barBeehive.draw();
+            if (soundS.getStatus() == SoundSource::Status::Stopped) soundS.play();
+        }
+        else
+        {
+            if (soundS.getStatus() == SoundSource::Status::Playing) soundS.stop();
+        }
+        if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+        {   
+            if(soundU.getStatus()==SoundSource::Status::Stopped) soundU.play();
+            barBeehive.draw(); 
             barBeehive2.draw();
         }
-
+        else 
+        { 
+        if (soundU.getStatus() == SoundSource::Status::Playing) soundU.stop(); 
+        }
+        
         Play.draw(BeeSprite);
+
+        if (mead)  Play.draw(beemead);
+
         for (size_t i = 0; i < size(blob); i++)
         {
             Play.draw(blob[i]);
         }
+        
         if (diedBee) Play.draw(Splash);
-
+         
         
         Play.display();
     }
     return 0;
 }
 
+
+bool GamеEndMenu(RenderWindow& window, RectangleShape& bacground, String str, Color col)
+{
+    std::vector<String> name_menu{ { L"Начать игру заново",L"Выход"}};
+   
+    // Объект меню
+    game::GameMenu mymenu(window, window.getSize().x/2, 300, 45, 90, name_menu);
+    // Установка цвета отображения меню
+    mymenu.setColorTextMenu(Color(227, 171, 0), Color::Yellow, Color::Black);
+    mymenu.AlignMenu(2);
+    
+    Text Titul;
+    Font font;
+
+    if (!font.loadFromFile("font/troika.otf"))
+    {
+        std::cout << "No font is here";
+    }
+    Titul.setFont(font);
+    game::TextFormat FText;
+    FText.size_font = 60;
+    FText.menu_text_color = col;
+    InitText(Titul,400, 200, str, FText);
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+            case Event::KeyReleased:
+                if (event.key.code == Keyboard::Up) { mymenu.MoveUp(); break; }
+                if (event.key.code == Keyboard::Down) { mymenu.MoveDown(); break; }
+                if (event.key.code == Keyboard::Return)
+                {
+                    switch (mymenu.getSelectedMenuNumber())
+                    {
+                    case 0:  return true; break;
+                    case 1:  return false; break;
+                    default:break;
+                    }
+                } break;
+            default:break;
+            }
+        }
+        
+
+        window.clear();
+        window.draw(bacground);
+        window.draw(Titul);
+        mymenu.draw();
+        window.display();
+    }
+    }
+
+
+
 void GamеMenu()
 {
 
-    RenderWindow window(VideoMode(1280, 720), L"Пчела на работе", Style::Default);
+    RenderWindow window(VideoMode(1280, 720), L"Пчела на работе", Style::Fullscreen);
     window.setMouseCursorVisible(false);
 
-    std::vector<String> name_menu{ { L"Старт",L"Настройки", L"О игре",L"Выход" } };
+    std::vector<String> name_menu{ { L"Игра",L"Настройки", L"Правила",L"Выход" } };
     // Объект меню
     game::GameMenu mymenu(window, 950, 250, 80, 100, name_menu);
     // Установка цвета отображения меню
