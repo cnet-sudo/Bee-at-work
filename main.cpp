@@ -1,6 +1,7 @@
 #include"GameMenu.h"
 #include"Animator.h"
 #include "HealthBarClass.h"
+#include "GameSound.h"
 #include<iostream>
 #include<chrono>
 #include<random>
@@ -20,44 +21,13 @@ void GamåMenu();
 bool GamåEndMenu(RenderWindow & window, RectangleShape & bacground, String str, Color col);
 
 
+
 int main()
 {   
     GamåMenu();
-    SoundBuffer buffer;
-    if (  !buffer.loadFromFile("sound/d.wav")) return -1;
-    Sound sound;
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.play();
 
-    SoundBuffer bufferU;
-    if ( !bufferU.loadFromFile("sound/u.wav")) return -1;
-    Sound soundU;
-    soundU.setBuffer(bufferU);
-    soundU.setLoop(true);
-
-    SoundBuffer bufferS;
-    if (!bufferS.loadFromFile("sound/s.wav")) return -1;
-    Sound soundS;
-    soundS.setBuffer(bufferS);
-    soundS.setLoop(true);
-
-    SoundBuffer bufferZ;
-    if (!bufferZ.loadFromFile("sound/z.wav")) return -1;
-    Sound soundZ;
-    soundZ.setBuffer(bufferZ);
-
-    SoundBuffer bufferSVS;
-    if (!bufferSVS.loadFromFile("sound/svs.wav")) return -1;
-    Sound soundSVS;
-    soundSVS.setBuffer(bufferSVS);
-
-    SoundBuffer bufferSH;
-    if (!bufferSH.loadFromFile("sound/sh.wav")) return -1;
-    Sound soundSH;
-    soundSH.setBuffer(bufferSH);
-
-
+    GameSound gsound;
+    
     AssetManager manager;
     long long null_number = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine rnd(static_cast<unsigned int>(null_number));
@@ -139,7 +109,7 @@ int main()
             switch (event_play.type)
             {
             case Event::KeyPressed:
-                if (event_play.key.code == Keyboard::Escape) { sound.stop(); GamåMenu(); sound.play();
+                if (event_play.key.code == Keyboard::Escape) {  GamåMenu(); 
                 }
                 if (event_play.key.code == Keyboard::Right) {
                     if (BeeSprite.getPosition().x < 1100) stepx = 5.0f;
@@ -187,6 +157,7 @@ int main()
                 break;
             }           
         }
+         gsound.play(0);
          Time deltaTime = clock.restart();   
          
          if (diedBee) SplashAnim.Update(deltaTime);
@@ -203,23 +174,23 @@ int main()
              if (barBeehive2.getFull()) 
              {
                  mead = false; 
-                 if (soundZ.getStatus() == SoundSource::Status::Playing) soundZ.stop();
+                gsound.stop(3);
                  barBeehive2.reset();
                  barBeehive.changeOfbar(10);
                  if (barBeehive.getFull())
-                 { sound.stop();
-                   if (soundU.getStatus() == SoundSource::Status::Playing) soundU.stop();
+                 { gsound.stop(0);
+                   gsound.stop(1);
                      if (GamåEndMenu(Play, background_play, L"Âû âûèãðàëè !!!", Color::Magenta))
                      {
                          barBeehive.reset();
                          diedBee = false;
                          BeeSprite.setPosition(90, 365);
-                         sound.play();
+                         gsound.play(0);
                      }
                      else Play.close();
                  }
              } 
-             else { barBeehive2.changeOfbar(1, deltaTime); if (soundZ.getStatus() == SoundSource::Status::Stopped) soundZ.play();}
+             else { barBeehive2.changeOfbar(1, deltaTime); gsound.play(3);}
         }
 
          
@@ -234,15 +205,15 @@ int main()
                  if (SplashAnim.getEndAnim()) {
                  BeeSprite.setRotation(90);
                  BeeSprite.move(0, 7);
-                 if (soundSVS.getStatus() == SoundSource::Status::Stopped) soundSVS.play();
+                 gsound.play(4);
                  if (BeeSprite.getPosition().y > 720) { 
-                     if (soundSVS.getStatus() == SoundSource::Status::Playing) soundSVS.stop();
+                    gsound.stop(4);
                  if (barBeehive.getSizeBar() == 0)
                  {
-                     sound.stop();
+                     gsound.stop(0);
                      if (GamåEndMenu(Play, background_play, L"Âû ïðîèãðàëè !!!", Color::Red))
                      {
-                         sound.play();
+                         gsound.play(0);
                          barBeehive.reset();
                          diedBee = false;
                          BeeSprite.setPosition(90, 365);
@@ -267,7 +238,7 @@ int main()
 
                  if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds())&& !diedBee)
                  {
-                     if (soundSH.getStatus() == SoundSource::Status::Stopped) soundSH.play();
+                     gsound.play(5);
                      Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
                      SplashAnim.restart();
                          blob[i].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
@@ -301,21 +272,21 @@ int main()
         
         if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) 
         {
-            if (soundS.getStatus() == SoundSource::Status::Stopped) soundS.play();
+            gsound.play(2);
         }
         else
         {
-            if (soundS.getStatus() == SoundSource::Status::Playing) soundS.stop();
+            gsound.stop(2);
         }
         if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
         {   
-            if(soundU.getStatus()==SoundSource::Status::Stopped) soundU.play();
+            gsound.play(1);
             barBeehive.draw(); 
             barBeehive2.draw();
         }
         else 
         { 
-        if (soundU.getStatus() == SoundSource::Status::Playing) soundU.stop(); 
+        gsound.stop(1); 
         }
         
         Play.draw(BeeSprite);
