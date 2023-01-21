@@ -49,7 +49,7 @@ class Engine
 	sf::Sprite Splash;
 	Animator SplashAnim= Animator(Splash);
 
-	void resetBlob(int index);
+	void resetBlob(size_t index);
 	void resetGame();
 
 	void input();

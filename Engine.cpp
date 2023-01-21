@@ -65,6 +65,7 @@ void Engine::update(sf::Time const& deltaTime)
     barTime.changeOfbar(-0.005, deltaTime);
 
     if (barTime.getEmpty()) Lost();
+    
     gsound.play(0);
     
     if (diedBee) SplashAnim.Update(deltaTime);
@@ -74,7 +75,9 @@ void Engine::update(sf::Time const& deltaTime)
         barFlow.changeOfbar(1, deltaTime);
         if (barFlow.getFull()) { mead = true; barFlow.reset(); }
     }
+    
     if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && barFlow.getSizeBar() != 0) barFlow.reset();
+    if (!BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()) && barBeehive2.getSizeBar() != 0) gsound.stop(3);
 
     if (mead && BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
     {
@@ -105,7 +108,8 @@ void Engine::update(sf::Time const& deltaTime)
     {
         BeeTime = sf::milliseconds(0);
 
-        if (!diedBee) BeeSprite.move(stepx, stepy);
+        if (!diedBee) 
+        BeeSprite.move(stepx, stepy);
         else
         {
             if (SplashAnim.getEndAnim()) {
@@ -133,6 +137,7 @@ void Engine::update(sf::Time const& deltaTime)
                 gsound.play(5);
                 Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
                 SplashAnim.restart();
+                barBeehive2.reset();
                 resetBlob(i);
                 diedBee = true; mead = false;
                 if (barBeehive.getSizeBar() >= 10) barBeehive.changeOfbar(-10);
@@ -289,7 +294,7 @@ void Engine::Options()
     // Объект меню
     game::GameMenu optmenu(Options, 640, 250, 80, 100, name_menu);
     // Установка цвета отображения меню
-    optmenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
+    optmenu.setColorTextMenu(sf::Color::Cyan, sf::Color::Magenta, sf::Color::Black);
     optmenu.AlignMenu(2);
     sf::Text Titul;
     sf::Font font;
@@ -299,7 +304,7 @@ void Engine::Options()
     }
     Titul.setFont(font);
     game::TextFormat FText;
-    FText.menu_text_color = sf::Color(227, 171, 0);
+    FText.menu_text_color = sf::Color::Cyan;
     InitText(Titul, 640- (Titul.getLocalBounds().width/2), 5, L"Настройки", FText);
     
     while (Options.isOpen())
@@ -498,7 +503,7 @@ void Engine::run()
 	}
 }
 
-void Engine::resetBlob(int index)
+void Engine::resetBlob(size_t index)
 {
     std::uniform_int_distribution RndPosBlobX(350, 900);
     std::uniform_int_distribution RndPosBlobY(0, 1000);
@@ -514,6 +519,7 @@ void Engine::resetBlob(int index)
 
 void Engine::resetGame()
 {
+    barBeehive.reset();
     barBeehive.reset();
     barTime.reset();
     diedBee = false;
