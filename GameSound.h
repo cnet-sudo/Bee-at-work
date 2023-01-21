@@ -11,6 +11,11 @@ class GameSound
 	bool s_onoffsou=true;
 public:
 	
+	bool getOnOffSound() const
+	{
+		return s_onoffsou;
+	}
+
 	GameSound()
 	{
 		for (int i = 0; i < 6; i++) {
