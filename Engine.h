@@ -22,8 +22,8 @@ class Engine
 	sf::Vector2i spriteSize= sf::Vector2i(100, 100);
 	sf::Sprite BeeSprite;      
 	Animator BeeAnim= Animator(BeeSprite);  // Анимация пчелы
-
-
+	
+	int language = 0;          // язык
 	bool direction = true;    // Направление полёта пчелы
 	float stepx = 0.0f;       // Перемещение пчелы по х
 	float stepy = 0.0f;       // Перемещение пчелы по y
@@ -34,7 +34,8 @@ class Engine
 	HealthBarClass barFlow = HealthBarClass(window, 1150, 330, true);        // Набор нектара
 	sf::CircleShape beehive= sf::CircleShape(30);
 	HealthBarClass barBeehive= HealthBarClass(window, 250, 430, true, 30);        // Количество мёда в улии
-	HealthBarClass barBeehive2= HealthBarClass(window, 240, 430, true, 0.0f, 10); // Слив мёда
+	HealthBarClass barBeehive2= HealthBarClass(window, 240, 430, true, 0.0f, 10.0f); // Слив мёда
+	HealthBarClass barTime = HealthBarClass(window, 25, 680, false, 100,30.0f,3);    // Время на сбор нектара
 	sf::RectangleShape beemead= sf::RectangleShape(sf::Vector2f(50, 50));         // Ведро с мёдом
 	sf::Texture beemeadtexture;
 	sf::RectangleShape background_play= sf::RectangleShape(sf::Vector2f(1280, 720)); // Фон игры
@@ -48,7 +49,8 @@ class Engine
 	sf::Sprite Splash;
 	Animator SplashAnim= Animator(Splash);
 
-	void resedBlob(int index);
+	void resetBlob(int index);
+	void resetGame();
 
 	void input();
 	void update(sf::Time const& deltaTime);
@@ -58,6 +60,7 @@ class Engine
 	void Options();
 	void About_Game();
 	bool GamеEndMenu(sf::String str, sf::Color col);
+	void Lost();
 public:
 	Engine()
 	{
@@ -69,6 +72,7 @@ public:
 		flowers.setPosition(1050, 230);
 		flowers.setFillColor(sf::Color(255, 255, 255, 0));
 		barFlow.setColorBar(sf::Color(0, 189, 0), sf::Color(158, 63, 25), 3);
+		barTime.setColorBar(sf::Color(0, 189, 0), sf::Color(158, 63, 25), 3);
 		beehive.setPosition(50, 340);
 		beehive.setFillColor(sf::Color(255, 255, 255, 0));
 		barBeehive.setColorBar(sf::Color(216, 212, 0), sf::Color(189, 116, 0), 3);
@@ -77,8 +81,9 @@ public:
 		beemead.setTexture(&beemeadtexture);
 		backgroundgame.loadFromFile("image/background.jpg");
 		background_play.setTexture(&backgroundgame);
+		
 		blobTextur.loadFromFile("image/blob.png");
-		for (size_t i = 0; i < size(blob); i++) resedBlob(i);
+		for (size_t i = 0; i < size(blob); i++) resetBlob(i);
 		Splash.setOrigin(50, -20);
 }
 

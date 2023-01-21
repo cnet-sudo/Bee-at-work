@@ -12,7 +12,7 @@ class HealthBarClass
     float xpos;                   // Координаты х
     float ypos;                   // Координаты y
     bool vert;                    // Положение полосы вертикально, горизонтально
-    float sizeBar;                // Переменная изменения длинны полосы
+    double sizeBar;                // Переменная изменения длинны полосы
     float thicknessBar;           // Толщина
     float divisionUnit;           // Масштаб полосы
     bool full=false;              // Наполнение
@@ -42,7 +42,7 @@ public:
         }
         else
         {
-            barHelth.setSize(sf::Vector2f(0, thicknessBar));
+            barHelth.setSize(sf::Vector2f(sizeBar * divisionUnit, thicknessBar));
             container.setSize(sf::Vector2f(100*divisionUnit, thicknessBar));
         }
     };
@@ -59,8 +59,8 @@ public:
     return sizeBar;
      }
 
-    void changeOfbar(float size, sf::Time const& dt);   // Изменение наполнения полосы
-    void changeOfbar(float size);
+    void changeOfbar(double size, sf::Time const& dt);   // Изменение наполнения полосы
+    void changeOfbar(double size);
     void draw();                                         // Рисования полосы жизни
     void setColorBar(sf::Color ColorHelth, sf::Color ColorContainer, float Thickness);  // Установка цвета
     void setSizeBar(float size);

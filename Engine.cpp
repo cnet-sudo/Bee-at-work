@@ -62,6 +62,9 @@ void Engine::input()
 
 void Engine::update(sf::Time const& deltaTime)
 {
+    barTime.changeOfbar(-0.005, deltaTime);
+
+    if (barTime.getEmpty()) Lost();
     gsound.play(0);
     
     if (diedBee) SplashAnim.Update(deltaTime);
@@ -87,9 +90,7 @@ void Engine::update(sf::Time const& deltaTime)
                 gsound.stop(1);
                 if (GamеEndMenu( L"Вы выиграли !!!", sf::Color::Magenta))
                 {
-                    barBeehive.reset();
-                    diedBee = false;
-                    BeeSprite.setPosition(90, 365);
+                    resetGame();
                     gsound.play(0);
                 }
                 else window.close();
@@ -113,18 +114,8 @@ void Engine::update(sf::Time const& deltaTime)
                 gsound.play(4);
                 if (BeeSprite.getPosition().y > 720) {
                     gsound.stop(4);
-                    if (barBeehive.getSizeBar() == 0)
-                    {
-                        gsound.stop(0);
-                        if (GamеEndMenu(L"Вы проиграли !!!", sf::Color::Red))
-                        {
-                            gsound.play(0);
-                            barBeehive.reset();
-                            diedBee = false;
-                            BeeSprite.setPosition(90, 365);
-                        }
-                        else window.close();
-                    }
+                    if (barBeehive.getSizeBar() == 0) Lost();
+                   
                     BeeSprite.setPosition(90, 365);
                     diedBee = false;
                     BeeSprite.setRotation(0);
@@ -135,14 +126,14 @@ void Engine::update(sf::Time const& deltaTime)
         for (size_t i = 0; i < size(blob); i++)
         {
             blob[i].move(0, 3);
-            if (blob[i].getPosition().y > 720) resedBlob(i);
+            if (blob[i].getPosition().y > 720) resetBlob(i);
             
             if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds()) && !diedBee)
             {
                 gsound.play(5);
                 Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
                 SplashAnim.restart();
-                resedBlob(i);
+                resetBlob(i);
                 diedBee = true; mead = false;
                 if (barBeehive.getSizeBar() >= 10) barBeehive.changeOfbar(-10);
             }
@@ -202,7 +193,7 @@ void Engine::draw()
 
     if (diedBee) window.draw(Splash);
 
-
+    barTime.draw();
     window.display();
 }
 
@@ -211,10 +202,14 @@ void Engine::GamеMenu()
     sf::RenderWindow window(sf::VideoMode(1280, 720), L"Пчела на работе", sf::Style::Fullscreen);
     window.setMouseCursorVisible(false);
 
-    std::vector<sf::String> name_menu{ { L"Игра",L"Настройки", L"Правила",L"Выход" } };
+    std::vector<std::vector<sf::String>>name_menu{ { L"Игра",L"Настройки", L"Правила",L"Выход" },
+        { L"Гра",L"Налаштування", L"Правила",L"Вихід" },{ L"Game",L"Settings", L"Rules",L"Exit" } };
+    std::array<sf::String, 3> str{ L"Пчела на работе",L"Бджола на роботі", L"Bee at work" };
+    bool switch_language = false; // Смена языка
     // Объект меню
-    game::GameMenu mymenu(window, 950, 250, 80, 100, name_menu);
+    game::GameMenu mymenu(window, 950, 250, 80, 100, name_menu[language]);
     // Установка цвета отображения меню
+
     mymenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
     mymenu.AlignMenu(2);
 
@@ -232,8 +227,9 @@ void Engine::GamеMenu()
     Titul.setFont(font);
     game::TextFormat FText;
     FText.menu_text_color = sf::Color(227, 171, 0);
-    InitText(Titul, 270, 5, L"Пчела на работе", FText);
-
+    InitText(Titul, 640 - (Titul.getLocalBounds().width / 2), 5, str[language], FText);
+    Titul.setString(str[language]);
+    Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 5);
     while (window.isOpen())
     {
         sf::Event event;
@@ -249,7 +245,7 @@ void Engine::GamеMenu()
                     switch (mymenu.getSelectedMenuNumber())
                     {
                     case 0:  window.close(); return; break;
-                    case 1:Options(); break;
+                    case 1:Options(); switch_language = true; break;
                     case 2:About_Game(); break;
                     case 3:exit(0); break;
                     default:break;
@@ -257,6 +253,13 @@ void Engine::GamеMenu()
                 } break;
             default:break;
             }
+        }
+        if (switch_language) {
+           
+                for (int i = 0; i < 4; i++) mymenu.setNameMenu(name_menu[language][i], i);
+                mymenu.AlignMenu(2);
+                Titul.setString(str[language]);
+                Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 5);              
         }
 
         window.clear(sf::Color::Blue);
@@ -274,22 +277,93 @@ void Engine::Options()
 
     sf::RectangleShape background_opt(sf::Vector2f(1280, 720));
     sf::Texture texture_opt;
-    if (!texture_opt.loadFromFile("image/menu1.jpg")) std::cout << "No image is here";
+    bool switch_language = true; // Смена языка
+    std::vector<sf::String> name_menu{ { L"-----",L"-----"} };
+    
 
+    bool onoff = gsound.getOnOffSound();
+    
+    if (!texture_opt.loadFromFile("image/menu1.jpg")) std::cout << "No image is here";
     background_opt.setTexture(&texture_opt);
+    
+    // Объект меню
+    game::GameMenu optmenu(Options, 640, 250, 80, 100, name_menu);
+    // Установка цвета отображения меню
+    optmenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
+    optmenu.AlignMenu(2);
+    sf::Text Titul;
+    sf::Font font;
+    if (!font.loadFromFile("font/troika.otf"))
+    {
+        std::cout << "No font is here";
+    }
+    Titul.setFont(font);
+    game::TextFormat FText;
+    FText.menu_text_color = sf::Color(227, 171, 0);
+    InitText(Titul, 640- (Titul.getLocalBounds().width/2), 5, L"Настройки", FText);
+    
     while (Options.isOpen())
     {
-        sf::Event event_opt;
-        while (Options.pollEvent(event_opt))
+        sf::Event event;
+        while (Options.pollEvent(event))
         {
-            if (event_opt.type == sf::Event::Closed) Options.close();
-            if (event_opt.type == sf::Event::KeyPressed)
+            switch (event.type)
             {
-                if (event_opt.key.code == sf::Keyboard::Escape) Options.close();
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::Escape) Options.close();
+                if (event.key.code == sf::Keyboard::Up) { optmenu.MoveUp(); break; }
+                if (event.key.code == sf::Keyboard::Down) { optmenu.MoveDown(); break; }
+                if (event.key.code == sf::Keyboard::Return)
+                {
+                    if (!optmenu.getSelectedMenuNumber()) {
+                        switch_language = true;
+                        if (language < 2) language++; else language = 0;
+                    }
+                    else 
+                    {
+                        onoff = !onoff;
+                        gsound.OnOffSound(onoff);
+                    }
+                    
+                } break;
+            default:break;
             }
         }
+        if (switch_language) {
+switch (language)
+    {
+    case 0: 
+        optmenu.setNameMenu(L"Язык - русский",0);
+        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Звук - включен", 1);
+        else optmenu.setNameMenu(L"Звук - выключен", 1);
+        Titul.setString(L"Настройки");
+        optmenu.AlignMenu(2);
+        Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 5);
+        break;
+    case 1:
+        optmenu.setNameMenu(L"Мова - українська", 0);
+        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Звук - увімкнено", 1);
+        else optmenu.setNameMenu(L"Звук - вимкнено", 1);
+        Titul.setString(L"Налаштування");
+        optmenu.AlignMenu(2);
+        Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 5);
+        break;
+    case 2:
+        optmenu.setNameMenu(L"Language - english", 0);
+        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Sound - on", 1);
+        else optmenu.setNameMenu(L"Sound - off", 1);
+        Titul.setString(L"Settings");
+        optmenu.AlignMenu(2);
+        Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 5);
+        break;
+    default:
+        break;
+    }
+}
         Options.clear();
         Options.draw(background_opt);
+        Options.draw(Titul);
+        optmenu.draw();
         Options.display();
     }
 
@@ -301,9 +375,27 @@ void Engine::About_Game()
 
     sf::RectangleShape background_ab(sf::Vector2f(1280, 720));
     sf::Texture texture_ab;
+    sf::Texture texture_ab1;
+    sf::Texture texture_ab2;
     if (!texture_ab.loadFromFile("image/menu2.jpg")) std::cout << "No image is here";
+    if (!texture_ab1.loadFromFile("image/menu21.jpg")) std::cout << "No image is here";
+    if (!texture_ab2.loadFromFile("image/menu22.jpg")) std::cout << "No image is here";
 
-    background_ab.setTexture(&texture_ab);
+    switch (language)
+    {
+    case 0:
+        background_ab.setTexture(&texture_ab);
+        break;
+    case 1:
+        background_ab.setTexture(&texture_ab2);
+        break;
+    case 2:
+        background_ab.setTexture(&texture_ab1);
+        break;
+    default:
+        break;
+    }
+    
 
     while (About.isOpen())
     {
@@ -357,12 +449,8 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
                 if (event.key.code == sf::Keyboard::Down) { mymenu.MoveDown(); break; }
                 if (event.key.code == sf::Keyboard::Return)
                 {
-                    switch (mymenu.getSelectedMenuNumber())
-                    {
-                    case 0:  return true; break;
-                    case 1:  return false; break;
-                    default:break;
-                    }
+                    if (mymenu.getSelectedMenuNumber()) return false; else return true;
+                    
                 } break;
             default:break;
             }
@@ -373,6 +461,17 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
         mymenu.draw();
         window.display();
     }
+}
+
+void Engine::Lost()
+{
+    gsound.stop(0);
+    if (GamеEndMenu(L"Вы проиграли !!!", sf::Color::Red))
+    {
+        gsound.play(0);
+        resetGame();
+    }
+    else window.close();
 }
 
 
@@ -399,7 +498,7 @@ void Engine::run()
 	}
 }
 
-void Engine::resedBlob(int index)
+void Engine::resetBlob(int index)
 {
     std::uniform_int_distribution RndPosBlobX(350, 900);
     std::uniform_int_distribution RndPosBlobY(0, 1000);
@@ -411,4 +510,12 @@ void Engine::resedBlob(int index)
     blob[index].setSize(sf::Vector2f(10.0f * blodSize, 20.0f * blodSize));
     blob[index].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
 
+}
+
+void Engine::resetGame()
+{
+    barBeehive.reset();
+    barTime.reset();
+    diedBee = false;
+    BeeSprite.setPosition(90, 365);
 }

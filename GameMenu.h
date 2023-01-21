@@ -34,7 +34,7 @@ namespace game {
 
 		// Цвет элементов игрового меню
 		void setColorTextMenu(sf::Color menColor, sf::Color ChoColor, sf::Color BordColor);
-
+		void setNameMenu(sf::String const& name, int index);
 		void AlignMenu(int posx);       // Выравнивание положения меню (по левому по правому по центру)
 
 		int getSelectedMenuNumber() const     // Возвращает номер выбраного элемента

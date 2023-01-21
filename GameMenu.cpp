@@ -7,9 +7,9 @@ void game::GameMenu::setInitText(sf::Text& text, const sf::String& str, float xp
 	text.setFillColor(menu_text_color);
 	text.setString(str);
 	text.setCharacterSize(size_font);
-	text.setPosition(xpos, ypos);
 	text.setOutlineThickness(3);
 	text.setOutlineColor(border_color);
+	text.setPosition(xpos, ypos);
 }
 
 void game::GameMenu::AlignMenu(int posx)
@@ -28,12 +28,12 @@ void game::GameMenu::AlignMenu(int posx)
 			nullx = mainMenu[i].getLocalBounds().width;
 			break;
 		case 2:
-			nullx = mainMenu[i].getLocalBounds().width / 2;
+			nullx = menu_X - (mainMenu[i].getLocalBounds().width / 2);
 			break;
 		default:break;
 		}
 
-		mainMenu[i].setPosition(mainMenu[i].getPosition().x - nullx, mainMenu[i].getPosition().y);
+		mainMenu[i].setPosition(nullx, mainMenu[i].getPosition().y);
 	}
 
 }
@@ -100,6 +100,11 @@ void game::GameMenu::setColorTextMenu(sf::Color menColor, sf::Color ChoColor, sf
 	}
 
 	mainMenu[mainMenuSelected].setFillColor(chose_text_color);
+}
+
+void game::GameMenu::setNameMenu(sf::String const& name, int index)
+{
+	mainMenu[index].setString(name);
 }
 
 void game::InitText(sf::Text& mtext, float xpos, float ypos, const sf::String& str, game::TextFormat Ftext)
