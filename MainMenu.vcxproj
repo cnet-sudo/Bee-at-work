@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="GameSound.cpp" />
     <ClCompile Include="HealthBarClass.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="GameSound.h" />
     <ClInclude Include="HealthBarClass.h" />
