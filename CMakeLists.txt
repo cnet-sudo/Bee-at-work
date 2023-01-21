@@ -9,7 +9,7 @@ FetchContent_MakeAvailable(SFML)
 
 
 add_executable(Bee_at_work main.cpp GameMenu.cpp GameMenu.h AssetManager.cpp AssetManager.h Animator.cpp Animator.h Engine.cpp 
-Engine.h HealthBarClass.cpp HealthBarClass.h  )
+Engine.h HealthBarClass.cpp HealthBarClass.h GameSound.cpp GameSound.h)
 
 add_custom_command(TARGET Bee_at_work POST_BUILD                
                    COMMAND ${CMAKE_COMMAND}
