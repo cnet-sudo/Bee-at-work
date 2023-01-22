@@ -34,7 +34,7 @@ class Engine
 	HealthBarClass barFlow = HealthBarClass(window, 1150, 330, true);        // Набор нектара
 	sf::CircleShape beehive= sf::CircleShape(30);
 	HealthBarClass barBeehive= HealthBarClass(window, 250, 430, true, 30);        // Количество мёда в улии
-	HealthBarClass barBeehive2= HealthBarClass(window, 240, 430, true, 0.0f, 10.0f); // Слив мёда
+	HealthBarClass barBeehive2= HealthBarClass(window, 238, 430, true, 0.0f, 10.0f); // Слив мёда
 	HealthBarClass barTime = HealthBarClass(window, 25, 680, false, 100,30.0f,3);    // Время на сбор нектара
 	sf::RectangleShape beemead= sf::RectangleShape(sf::Vector2f(50, 50));         // Ведро с мёдом
 	sf::Texture beemeadtexture;
