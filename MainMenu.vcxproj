@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{c167d0cc-4308-433b-8573-6023bde84835}</ProjectGuid>
-    <RootNamespace>MainMenu</RootNamespace>
+    <RootNamespace>Bee at work</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Bee at work</ProjectName>
   </PropertyGroup>
@@ -164,6 +164,13 @@
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="GameSound.h" />
     <ClInclude Include="HealthBarClass.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Bee at work.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="image\wink.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
