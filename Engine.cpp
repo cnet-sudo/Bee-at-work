@@ -4,7 +4,7 @@ void Engine::input()
 {
     sf::Event event_play;
 
-    while (window.pollEvent(event_play))
+    while (window->pollEvent(event_play))
     {
         switch (event_play.type)
         {
@@ -96,7 +96,7 @@ void Engine::update(sf::Time const& deltaTime)
                     resetGame();
                     gsound.play(0);
                 }
-                else window.close();
+                else window->close();
             }
         }
         else { barBeehive2.changeOfbar(1, deltaTime); gsound.play(3); }
@@ -161,10 +161,10 @@ void Engine::update(sf::Time const& deltaTime)
 
 void Engine::draw()
 {
-    window.clear();
-    window.draw(background_play);
-    window.draw(flowers);
-    window.draw(beehive);
+    window->clear();
+    window->draw(background_play);
+    window->draw(flowers);
+    window->draw(beehive);
 
     if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) barFlow.draw();
 
@@ -187,19 +187,19 @@ void Engine::draw()
         gsound.stop(1);
     }
 
-    window.draw(BeeSprite);
+    window->draw(BeeSprite);
 
-    if (mead)  window.draw(beemead);
+    if (mead)  window->draw(beemead);
 
     for (size_t i = 0; i < size(blob); i++)
     {
-        window.draw(blob[i]);
+        window->draw(blob[i]);
     }
 
-    if (diedBee) window.draw(Splash);
+    if (diedBee) window->draw(Splash);
 
     barTime.draw();
-    window.display();
+    window->display();
 }
 
 void Engine::GamåMenu()
@@ -424,7 +424,7 @@ bool Engine::GamåEndMenu(sf::String str, sf::Color col)
     std::vector<sf::String> name_menu{ { L"Ğåñòàğò",L"Âûõîä"} };
 
     // Îáúåêò ìåíş
-    game::GameMenu mymenu(window, window.getSize().x / 2, 300, 45, 90, name_menu);
+    game::GameMenu mymenu(*window, window->getSize().x / 2, 300, 45, 90, name_menu);
     // Óñòàíîâêà öâåòà îòîáğàæåíèÿ ìåíş
     mymenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
     mymenu.AlignMenu(2);
@@ -442,10 +442,10 @@ bool Engine::GamåEndMenu(sf::String str, sf::Color col)
     FText.menu_text_color = col;
     InitText(Titul, 400, 200, str, FText);
 
-    while (window.isOpen())
+    while (window->isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event))
+        while (window->pollEvent(event))
         {
             switch (event.type)
             {
@@ -460,11 +460,11 @@ bool Engine::GamåEndMenu(sf::String str, sf::Color col)
             default:break;
             }
         }
-        window.clear();
-        window.draw(background_play);
-        window.draw(Titul);
+        window->clear();
+        window->draw(background_play);
+        window->draw(Titul);
         mymenu.draw();
-        window.display();
+        window->display();
     }
 }
 
@@ -476,7 +476,7 @@ void Engine::Lost()
         gsound.play(0);
         resetGame();
     }
-    else window.close();
+    else window->close();
 }
 
 
@@ -493,7 +493,7 @@ void Engine::run()
     idleBack.AddFrames(sf::Vector2i(0, 100), spriteSize, 6, 1);
 
     sf::Clock clock;
-	while (window.isOpen())
+	while (window->isOpen())
 	{
 		sf::Time dt = clock.restart();
 		

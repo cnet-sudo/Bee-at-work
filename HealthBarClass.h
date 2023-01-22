@@ -55,7 +55,7 @@ public:
     {
         return empty;
     }
-    float getSizeBar() const {
+    double getSizeBar() const {
     return sizeBar;
      }
 

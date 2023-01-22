@@ -6,14 +6,14 @@
 #include "GameSound.h"
 #include<chrono>
 #include<random>
+#include <memory>
 
 class Engine
 {
 	// Блок случайных чисел
 	long long null_number = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine rnd= std::default_random_engine(static_cast<unsigned int>(null_number));
-		
-	sf::RenderWindow window;   // Игровое графическое окно
+	std::unique_ptr<sf::RenderWindow> window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1280, 720), L"Пчела на работе", sf::Style::Fullscreen);
 	GameSound gsound;          // Звуковые эффекты
 	AssetManager manager;      // Менеджер ресурсов
 	
@@ -31,11 +31,11 @@ class Engine
 	bool mead = false;       // Наполнение корзинки мёдом
 
 	sf::CircleShape flowers; // тагерт сбора нектара
-	HealthBarClass barFlow = HealthBarClass(window, 1150, 330, true);        // Набор нектара
+	HealthBarClass barFlow = HealthBarClass(*window, 1150, 330, true);        // Набор нектара
 	sf::CircleShape beehive= sf::CircleShape(30);
-	HealthBarClass barBeehive= HealthBarClass(window, 250, 430, true, 30);        // Количество мёда в улии
-	HealthBarClass barBeehive2= HealthBarClass(window, 238, 430, true, 0.0f, 10.0f); // Слив мёда
-	HealthBarClass barTime = HealthBarClass(window, 25, 680, false, 100,30.0f,3);    // Время на сбор нектара
+	HealthBarClass barBeehive= HealthBarClass(*window, 250, 430, true, 30);        // Количество мёда в улии
+	HealthBarClass barBeehive2= HealthBarClass(*window, 238, 430, true, 0.0f, 10.0f); // Слив мёда
+	HealthBarClass barTime = HealthBarClass(*window, 25, 680, false, 100,30.0f,3);    // Время на сбор нектара
 	sf::RectangleShape beemead= sf::RectangleShape(sf::Vector2f(50, 50));         // Ведро с мёдом
 	sf::Texture beemeadtexture;
 	sf::RectangleShape background_play= sf::RectangleShape(sf::Vector2f(1280, 720)); // Фон игры
@@ -66,8 +66,7 @@ public:
 	{
 		BeeSprite.setOrigin(50, 50);
 		BeeSprite.setPosition(90, 365);
-		window.create(sf::VideoMode(1280, 720), L"Пчела на работе", sf::Style::Fullscreen);
-		window.setMouseCursorVisible(false);
+		this->window->setMouseCursorVisible(false);
 		flowers.setRadius(50);
 		flowers.setPosition(1050, 230);
 		flowers.setFillColor(sf::Color(255, 255, 255, 0));
@@ -87,6 +86,7 @@ public:
 		Splash.setOrigin(50, -20);
 }
 
+	
 	void run();
 
 };
