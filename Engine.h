@@ -13,15 +13,16 @@ class Engine
 	// Блок случайных чисел
 	long long null_number = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine rnd= std::default_random_engine(static_cast<unsigned int>(null_number));
+	
 	std::unique_ptr<sf::RenderWindow> window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1280, 720), L"Пчела на работе", sf::Style::Fullscreen);
+	
 	GameSound gsound;          // Звуковые эффекты
 	AssetManager manager;      // Менеджер ресурсов
 	
 	sf::Time BeeTime;          // Общее время
     // Спрайт пчелы
-	sf::Vector2i spriteSize= sf::Vector2i(100, 100);
 	sf::Sprite BeeSprite;      
-	Animator BeeAnim= Animator(BeeSprite);  // Анимация пчелы
+	Animator BeeAnim = Animator(BeeSprite);  // Анимация пчелы
 	
 	int language = 0;          // язык
 	bool direction = true;    // Направление полёта пчелы
@@ -45,7 +46,6 @@ class Engine
 	std::array<sf::RectangleShape, 20> blob;
 
 	// Анимация брызг
-	sf::Vector2i SplashSize= sf::Vector2i(100, 50);
 	sf::Sprite Splash;
 	Animator SplashAnim= Animator(Splash);
 
@@ -79,8 +79,7 @@ public:
 		beemeadtexture.loadFromFile("image/mead.png");
 		beemead.setTexture(&beemeadtexture);
 		backgroundgame.loadFromFile("image/background.jpg");
-		background_play.setTexture(&backgroundgame);
-		
+		background_play.setTexture(&backgroundgame);	
 		blobTextur.loadFromFile("image/blob.png");
 		for (size_t i = 0; i < size(blob); i++) resetBlob(i);
 		Splash.setOrigin(50, -20);

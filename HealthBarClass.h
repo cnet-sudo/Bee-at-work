@@ -3,10 +3,8 @@
 
 class HealthBarClass
 {
-    sf::RectangleShape barHelth;  // Полоса жизни
-    
+    sf::RectangleShape barHelth;  // Полоса жизни 
     sf::RectangleShape container; // Сосуд жизни
-
     sf::RenderWindow& mywindow;   // ссылка на графическое окно
     sf::Time m_duration;
     float xpos;                   // Координаты х

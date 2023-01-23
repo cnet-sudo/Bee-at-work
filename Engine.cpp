@@ -483,7 +483,9 @@ void Engine::Lost()
 void Engine::run()
 {
     GamеMenu();  // стартовое меню
-    // Анимация капли    
+    // Анимация капли  
+    sf::Vector2i spriteSize = sf::Vector2i(100, 100);
+    sf::Vector2i SplashSize = sf::Vector2i(100, 50);
     auto& idleSplash = SplashAnim.CreateAnimation("idleSplash", "image/maker.png", sf::seconds(1), false);
     idleSplash.AddFrames(sf::Vector2i(0, 0), SplashSize, 6, 1);
     // Анимация пчелы
@@ -510,7 +512,7 @@ void Engine::resetBlob(size_t index)
     std::uniform_int_distribution RndPosBlobSize(1, 3);
     float blodSize;
 
-    blob[index].setTexture(&blobTextur);
+    if (!blob[index].getTexture()) blob[index].setTexture(&blobTextur);
     blodSize = static_cast<float>(RndPosBlobSize(rnd));
     blob[index].setSize(sf::Vector2f(10.0f * blodSize, 20.0f * blodSize));
     blob[index].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
