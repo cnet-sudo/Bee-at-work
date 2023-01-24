@@ -14,15 +14,13 @@ void Engine::input()
             }
             if (event_play.key.code == sf::Keyboard::Right) {
                 if (BeeSprite.getPosition().x < 1100) stepx = 5.0f;
-                if (!direction) {  BeeAnim.SwitchAnimation("idleForward"); direction = true;
-                }
+                if (BeeAnim.GetCurrentAnimationName()!="idleForward") { BeeAnim.SwitchAnimation("idleForward");  }
             }
             if (event_play.key.code == sf::Keyboard::Left)
             {
                 if (BeeSprite.getPosition().x > 50)stepx = -5.0f;
-                if (direction) {
-                    BeeAnim.SwitchAnimation("idleBack"); direction = false;
-                }
+                if (BeeAnim.GetCurrentAnimationName() != "idleBack") {
+                    BeeAnim.SwitchAnimation("idleBack"); }
             }
 
             if (event_play.key.code == sf::Keyboard::Up) {

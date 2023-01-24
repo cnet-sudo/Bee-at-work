@@ -24,7 +24,6 @@ class Engine
 	Animator BeeAnim = Animator(BeeSprite);  // Анимация пчелы
 	
 	int language = 0;          // язык
-	bool direction = true;    // Направление полёта пчелы
 	float stepx = 0.0f;       // Перемещение пчелы по х
 	float stepy = 0.0f;       // Перемещение пчелы по y
 	bool diedBee = false;     // Жизнь пчелы 
