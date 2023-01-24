@@ -146,6 +146,7 @@
     <ClCompile Include="GameSound.cpp" />
     <ClCompile Include="HealthBarClass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="openal32.dll" />
@@ -165,6 +166,7 @@
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="GameSound.h" />
     <ClInclude Include="HealthBarClass.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

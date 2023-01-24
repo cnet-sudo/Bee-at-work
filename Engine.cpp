@@ -13,42 +13,44 @@ void Engine::input()
                 GamеMenu();
             }
             if (event_play.key.code == sf::Keyboard::Right) {
-                if (BeeSprite.getPosition().x < 1100) stepx = 5.0f;
-                if (BeeAnim.GetCurrentAnimationName()!="idleForward") { BeeAnim.SwitchAnimation("idleForward");  }
+                Bee->MoveRight();
+               
             }
             if (event_play.key.code == sf::Keyboard::Left)
             {
-                if (BeeSprite.getPosition().x > 50)stepx = -5.0f;
-                if (BeeAnim.GetCurrentAnimationName() != "idleBack") {
-                    BeeAnim.SwitchAnimation("idleBack"); }
+                Bee->MoveLeft();
+               
             }
 
             if (event_play.key.code == sf::Keyboard::Up) {
-                if (BeeSprite.getPosition().y > 100) stepy = -5.0f;
+                Bee->MoveUp();
+              
             }
             if (event_play.key.code == sf::Keyboard::Down)
             {
-                if (BeeSprite.getPosition().y < 620) stepy = 5.0f;
+                Bee->MoveDown();
+               
             }
             break;
         case sf::Event::KeyReleased:
             if (event_play.key.code == sf::Keyboard::Right) {
-                stepx = 0.0f;
-
+               
+                Bee->setStepx(0);
             }
             if (event_play.key.code == sf::Keyboard::Left)
             {
-                stepx = 0.0f;
-
+                
+                Bee->setStepx(0);
             }
 
             if (event_play.key.code == sf::Keyboard::Up) {
-                stepy = 0.0f;
+               
+                Bee->setStepy(0);
             }
             if (event_play.key.code == sf::Keyboard::Down)
             {
-                stepy = 0.0f;
-
+                
+                Bee->setStepy(0);
             }
             break;
         default:
@@ -60,141 +62,118 @@ void Engine::input()
 
 void Engine::update(sf::Time const& deltaTime)
 {
-    barTime.changeOfbar(-0.005, deltaTime);
+    auto SPBee = Bee->getBee();  // Ссылка на спрайт пчелы
 
-    if (barTime.getEmpty()) Lost();
-    
-    gsound.play(0);
-    
-    if (diedBee) SplashAnim.Update(deltaTime);
+    barTime.changeOfbar(-0.005, deltaTime);  // Время игры
 
-    if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !mead)
+    if (barTime.getEmpty()) Lost(); 
+
+    gsound->play(0); // Шум дождя
+    
+
+    if (SPBee.getGlobalBounds().intersects(flowers.getGlobalBounds()) && !Bee->getMead())
     {
         barFlow.changeOfbar(1, deltaTime);
-        if (barFlow.getFull()) { mead = true; barFlow.reset(); }
+        if (barFlow.getFull()) { Bee->setmead(true); barFlow.reset(); }
     }
-    
-    if (!BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()) && barFlow.getSizeBar() != 0) barFlow.reset();
-    if (!BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()) && barBeehive2.getSizeBar() != 0) gsound.stop(3);
 
-    if (mead && BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+    if (!SPBee.getGlobalBounds().intersects(flowers.getGlobalBounds()) && barFlow.getSizeBar() != 0) barFlow.reset();
+    if (!SPBee.getGlobalBounds().intersects(beehive.getGlobalBounds()) && barBeehive2.getSizeBar() != 0) gsound->stop(3);
+
+    if (Bee->getMead() && SPBee.getGlobalBounds().intersects(beehive.getGlobalBounds()))
     {
         if (barBeehive2.getFull())
         {
-            mead = false;
-            gsound.stop(3);
+            Bee->setmead(false);
+            gsound->stop(3);
             barBeehive2.reset();
             barBeehive.changeOfbar(10);
             if (barBeehive.getFull())
             {
-                gsound.stop(0);
-                gsound.stop(1);
-                if (GamеEndMenu( L"Вы выиграли !!!", sf::Color::Magenta))
+                gsound->stop(0);
+                gsound->stop(1);
+                if (GamеEndMenu(L"Вы выиграли !!!", sf::Color::Magenta))
                 {
                     resetGame();
-                    gsound.play(0);
+                    gsound->play(0);
                 }
                 else window->close();
             }
         }
-        else { barBeehive2.changeOfbar(1, deltaTime); gsound.play(3); }
+        else { barBeehive2.changeOfbar(1, deltaTime); gsound->play(3); }
     }
 
-
+    Bee->update(deltaTime);
+    
     BeeTime += deltaTime;
+
     if (BeeTime > sf::milliseconds(20))
     {
         BeeTime = sf::milliseconds(0);
 
-        if (!diedBee) 
-        BeeSprite.move(stepx, stepy);
-        else
+        if (Bee->getreturnBee()) { if (barBeehive.getSizeBar() == 0) Lost(); Bee->setreturnBee(false); }
+                
+          
+    for (size_t i = 0; i < size(blob); i++)
+    {
+        blob[i].move(0, 3);
+        if (blob[i].getPosition().y > 720) resetBlob(i);
+        if (!Bee->getdiedBee()) {
+        if (blob[i].getGlobalBounds().intersects(SPBee.getGlobalBounds()))
         {
-            if (SplashAnim.getEndAnim()) {
-                BeeSprite.setRotation(90);
-                BeeSprite.move(0, 7);
-                gsound.play(4);
-                if (BeeSprite.getPosition().y > 720) {
-                    gsound.stop(4);
-                    if (barBeehive.getSizeBar() == 0) Lost();
-                   
-                    BeeSprite.setPosition(90, 365);
-                    diedBee = false;
-                    BeeSprite.setRotation(0);
-                    BeeAnim.SwitchAnimation("idleForward");
-                }
-            }
+            gsound->play(5);
+            Bee->startDied(blob[i].getPosition().x, blob[i].getPosition().y);
+            Bee->setdiedBee(true);
+            Bee->setmead(false);
+            barBeehive2.reset();
+            resetBlob(i);
+            if (barBeehive.getSizeBar() >= 10) barBeehive.changeOfbar(-10);
         }
-        for (size_t i = 0; i < size(blob); i++)
-        {
-            blob[i].move(0, 3);
-            if (blob[i].getPosition().y > 720) resetBlob(i);
-            
-            if (blob[i].getGlobalBounds().intersects(BeeSprite.getGlobalBounds()) && !diedBee)
-            {
-                gsound.play(5);
-                Splash.setPosition(blob[i].getPosition().x, blob[i].getPosition().y);
-                SplashAnim.restart();
-                barBeehive2.reset();
-                resetBlob(i);
-                diedBee = true; mead = false;
-                if (barBeehive.getSizeBar() >= 10) barBeehive.changeOfbar(-10);
-            }
         }
+     }
+      }
+ }
 
-    }
-
-
-    if (!diedBee) {
-        BeeAnim.Update(deltaTime);
-        if (BeeSprite.getPosition().x < 50) { BeeSprite.setPosition(50, BeeSprite.getPosition().y); }
-        if (BeeSprite.getPosition().x > 1100) { BeeSprite.setPosition(1100, BeeSprite.getPosition().y); }
-        if (BeeSprite.getPosition().y < 100) { BeeSprite.setPosition(BeeSprite.getPosition().x, 100); }
-        if (BeeSprite.getPosition().y > 620) { BeeSprite.setPosition(BeeSprite.getPosition().x, 620); }
-    }
-
-    beemead.setPosition(BeeSprite.getPosition().x - 20, BeeSprite.getPosition().y + 40);
-
-}
 
 void Engine::draw()
 {
+    auto SPBee = Bee->getBee();
     window->clear();
     window->draw(background_play);
     window->draw(flowers);
     window->draw(beehive);
 
-    if (!mead && BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds())) barFlow.draw();
+    if (!Bee->getMead() && SPBee.getGlobalBounds().intersects(flowers.getGlobalBounds())) barFlow.draw();
 
-    if (BeeSprite.getGlobalBounds().intersects(flowers.getGlobalBounds()))
+    if (SPBee.getGlobalBounds().intersects(flowers.getGlobalBounds()))
     {
-        gsound.play(2);
+        gsound->play(2);
     }
     else
     {
-        gsound.stop(2);
+        gsound->stop(2);
     }
-    if (BeeSprite.getGlobalBounds().intersects(beehive.getGlobalBounds()))
+    if (SPBee.getGlobalBounds().intersects(beehive.getGlobalBounds()))
     {
-        gsound.play(1);
+        gsound->play(1);
         barBeehive.draw();
         barBeehive2.draw();
     }
     else
     {
-        gsound.stop(1);
+        gsound->stop(1);
     }
 
-    window->draw(BeeSprite);
+    Bee->draw();
 
-    if (mead)  window->draw(beemead);
+   
 
     for (size_t i = 0; i < size(blob); i++)
     {
         window->draw(blob[i]);
     }
 
-    if (diedBee) window->draw(Splash);
+   
 
     barTime.draw();
     window->display();
@@ -284,7 +263,7 @@ void Engine::Options()
     std::vector<sf::String> name_menu{ { L"-----",L"-----"} };
     
 
-    bool onoff = gsound.getOnOffSound();
+    bool onoff = gsound->getOnOffSound();
     
     if (!texture_opt.loadFromFile("image/menu1.jpg")) std::cout << "No image is here";
     background_opt.setTexture(&texture_opt);
@@ -325,7 +304,7 @@ void Engine::Options()
                     else 
                     {
                         onoff = !onoff;
-                        gsound.OnOffSound(onoff);
+                        gsound->OnOffSound(onoff);
                     }
                     
                 } break;
@@ -337,7 +316,7 @@ switch (language)
     {
     case 0: 
         optmenu.setNameMenu(L"Язык - русский",0);
-        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Звук - включен", 1);
+        if (gsound->getOnOffSound()) optmenu.setNameMenu(L"Звук - включен", 1);
         else optmenu.setNameMenu(L"Звук - выключен", 1);
         Titul.setString(L"Настройки");
         optmenu.AlignMenu(2);
@@ -345,7 +324,7 @@ switch (language)
         break;
     case 1:
         optmenu.setNameMenu(L"Мова - українська", 0);
-        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Звук - увімкнено", 1);
+        if (gsound->getOnOffSound()) optmenu.setNameMenu(L"Звук - увімкнено", 1);
         else optmenu.setNameMenu(L"Звук - вимкнено", 1);
         Titul.setString(L"Налаштування");
         optmenu.AlignMenu(2);
@@ -353,7 +332,7 @@ switch (language)
         break;
     case 2:
         optmenu.setNameMenu(L"Language - english", 0);
-        if (gsound.getOnOffSound()) optmenu.setNameMenu(L"Sound - on", 1);
+        if (gsound->getOnOffSound()) optmenu.setNameMenu(L"Sound - on", 1);
         else optmenu.setNameMenu(L"Sound - off", 1);
         Titul.setString(L"Settings");
         optmenu.AlignMenu(2);
@@ -468,10 +447,10 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
 
 void Engine::Lost()
 {
-    gsound.stop(0);
+    gsound->stop(0);
     if (GamеEndMenu(L"Вы проиграли !!!", sf::Color::Red))
     {
-        gsound.play(0);
+        gsound->play(0);
         resetGame();
     }
     else window->close();
@@ -481,17 +460,7 @@ void Engine::Lost()
 void Engine::run()
 {
     GamеMenu();  // стартовое меню
-    // Анимация капли  
-    sf::Vector2i spriteSize = sf::Vector2i(100, 100);
-    sf::Vector2i SplashSize = sf::Vector2i(100, 50);
-    auto& idleSplash = SplashAnim.CreateAnimation("idleSplash", "image/maker.png", sf::seconds(1), false);
-    idleSplash.AddFrames(sf::Vector2i(0, 0), SplashSize, 6, 1);
-    // Анимация пчелы
-    auto& idleForward = BeeAnim.CreateAnimation("idleForward", "image/SPRITESHEET.png", sf::seconds(1), true);
-    idleForward.AddFrames(sf::Vector2i(0, 0), spriteSize, 6, 1);
-    auto& idleBack = BeeAnim.CreateAnimation("idleBack", "image/SPRITESHEET.png", sf::seconds(1), true);
-    idleBack.AddFrames(sf::Vector2i(0, 100), spriteSize, 6, 1);
-
+    
     sf::Clock clock;
 	while (window->isOpen())
 	{
@@ -520,8 +489,5 @@ void Engine::resetBlob(size_t index)
 void Engine::resetGame()
 {
     barBeehive.reset();
-    barBeehive.reset();
     barTime.reset();
-    diedBee = false;
-    BeeSprite.setPosition(90, 365);
 }
