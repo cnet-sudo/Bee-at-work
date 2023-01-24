@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-void Engine::input()
+void Engine::input() 
 {
     sf::Event event_play;
 
@@ -401,7 +401,7 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
     std::vector<sf::String> name_menu{ { L"Рестарт",L"Выход"} };
 
     // Объект меню
-    game::GameMenu mymenu(*window, window->getSize().x / 2, 300, 45, 90, name_menu);
+    game::GameMenu mymenu(*window, static_cast<float>(window->getSize().x / 2), 300, 45, 90, name_menu);
     // Установка цвета отображения меню
     mymenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
     mymenu.AlignMenu(2);
