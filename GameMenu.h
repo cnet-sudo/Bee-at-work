@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "AssetManager.h"
 
 namespace game {
 
@@ -10,8 +11,7 @@ namespace game {
 		int menu_Step;                                    // Расстояние между пунктами меню
 		int max_menu;                                     // Максимальное количество пунктов меню
 		int size_font;                                    // Размер шрифта
-		int mainMenuSelected;                             // Номер текущего пункта меню 
-		sf::Font font;                                    // Шрифт меню 
+		int mainMenuSelected;                             // Номер текущего пункта меню                                 
 		std::vector<sf::Text> mainMenu;                   // Динамический массив названий меню
 
 		sf::Color menu_text_color = sf::Color::White;      // Цвет меню

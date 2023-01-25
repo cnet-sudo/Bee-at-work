@@ -3,7 +3,7 @@
 
 void game::GameMenu::setInitText(sf::Text& text, const sf::String& str, float xpos, float ypos) const
 {
-	text.setFont(font);
+	text.setFont(AssetManager::GetFont("font/troika.otf"));
 	text.setFillColor(menu_text_color);
 	text.setString(str);
 	text.setCharacterSize(size_font);
@@ -41,8 +41,6 @@ void game::GameMenu::AlignMenu(int posx)
 game::GameMenu::GameMenu(sf::RenderWindow& window, float menux, float menuy, int sizeFont, int step, std::vector<sf::String>& name)
 	:menu_X(menux), menu_Y(menuy), menu_Step(step), max_menu(static_cast<int>(name.size())), size_font(sizeFont), mainMenu(name.size()), mywindow(window)
 {
-	if (!font.loadFromFile("font/troika.otf")) exit(32);
-
 	for (int i = 0, ypos = static_cast<int>(menu_Y); i < max_menu; i++, ypos += menu_Step)
 		setInitText(mainMenu[i], name[i], menu_X, static_cast<float>(ypos));
 	mainMenuSelected = 0;

@@ -83,6 +83,7 @@ void HealthBarClass::changeOfbar(double size)
 
 void HealthBarClass::setColorBar(sf::Color ColorHelth, sf::Color ColorContainer, float Thickness) 
 {
+    this->ColorHelth = ColorHelth;
     barHelth.setFillColor(ColorHelth);
     container.setOutlineColor(ColorContainer);
     container.setOutlineThickness(Thickness);
