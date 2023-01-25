@@ -84,12 +84,7 @@ void Player::update(sf::Time const& deltaTime)
                 BeeSprite.setRotation(90);
                 BeeSprite.move(0, 7); gsound.play(4);
                 if (BeeSprite.getPosition().y > 820) {
-                    gsound.stop(4);
-                    BeeSprite.setPosition(90, 365);
-                    BeeSprite.setRotation(0);
-                    BeeAnim.SwitchAnimation("idleForward");
-                    diedBee = false; 
-                    returnBee = true;
+                    reset();
                 }
             }
         }
@@ -102,4 +97,14 @@ void Player::draw()
     window.draw(BeeSprite);
     if (mead)  window.draw(beemead);
     if (diedBee) window.draw(Splash);
+}
+
+void Player::reset()
+{
+    gsound.stop(4);
+    BeeSprite.setPosition(90, 365);
+    BeeSprite.setRotation(0);
+    BeeAnim.SwitchAnimation("idleForward");
+    diedBee = false;
+    returnBee = true;
 }

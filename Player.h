@@ -54,6 +54,7 @@ public:
 	void setreturnBee(bool ret);
 	void update(sf::Time const& deltaTime);
 	void draw();
+	void reset();
 
 	bool getMead() const 
 	{

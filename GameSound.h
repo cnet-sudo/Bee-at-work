@@ -27,5 +27,6 @@ public:
 	void play(int index);
 	void stop(int index);
 	void OnOffSound(bool onoffsou);
+	void AllStop();
 };
 

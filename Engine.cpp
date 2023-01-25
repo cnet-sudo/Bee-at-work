@@ -64,7 +64,7 @@ void Engine::update(sf::Time const& deltaTime)
 {
     auto SPBee = Bee->getBee();  // Ссылка на спрайт пчелы
 
-    barTime.changeOfbar(-0.005, deltaTime);  // Время игры
+    barTime.changeOfbar(-0.05, deltaTime);  // Время игры
     
     auto sizeBarTime = barTime.getSizeBar();
     if (sizeBarTime <25 && barTime.getColorHelth() != sf::Color::Red) barTime.setColorBar(sf::Color::Red, sf::Color(158, 63, 25), 3);
@@ -477,4 +477,7 @@ void Engine::resetGame()
 {
     barBeehive.reset();
     barTime.reset();
+    barTime.setColorBar(sf::Color(0, 189, 0), sf::Color(158, 63, 25), 3);
+    gsound->AllStop();
+    Bee->reset();
 }

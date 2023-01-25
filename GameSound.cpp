@@ -23,3 +23,8 @@ void GameSound::OnOffSound(bool onoffsou)
 		for (int i = 0; i < 6; i++) if (GSound[i].getStatus() == sf::SoundSource::Status::Playing) GSound[i].stop();
 	}
 }
+
+void GameSound::AllStop()
+{
+	for (int i = 0; i < 6; i++) if (GSound[i].getStatus() == sf::SoundSource::Status::Playing) GSound[i].stop();
+}
