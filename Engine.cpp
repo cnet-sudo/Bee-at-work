@@ -10,7 +10,7 @@ void Engine::input()
         {
         case sf::Event::KeyPressed:
             if (event_play.key.code == sf::Keyboard::Escape) {
-                GamеMenu();
+                window->setActive(false); GamеMenu();
             }
             if (event_play.key.code == sf::Keyboard::Right) {
                 Bee->MoveRight();
@@ -65,7 +65,11 @@ void Engine::update(sf::Time const& deltaTime)
     auto SPBee = Bee->getBee();  // Ссылка на спрайт пчелы
 
     barTime.changeOfbar(-0.005, deltaTime);  // Время игры
-
+    
+    auto sizeBarTime = barTime.getSizeBar();
+    if (sizeBarTime <25 && barTime.getColorHelth() != sf::Color::Red) barTime.setColorBar(sf::Color::Red, sf::Color(158, 63, 25), 3);
+    if (sizeBarTime <50 && sizeBarTime > 40 && barTime.getColorHelth()!= sf::Color::Yellow) barTime.setColorBar(sf::Color::Yellow, sf::Color(158, 63, 25), 3);
+    
     if (barTime.getEmpty()) Lost(); 
 
     gsound->play(0); // Шум дождя
@@ -116,7 +120,7 @@ void Engine::update(sf::Time const& deltaTime)
           
     for (size_t i = 0; i < size(blob); i++)
     {
-        blob[i].move(0, 3);
+        blob[i].move(0, speedBlob[i]);
         if (blob[i].getPosition().y > 720) resetBlob(i);
         if (!Bee->getdiedBee()) {
         if (blob[i].getGlobalBounds().intersects(SPBee.getGlobalBounds()))
@@ -182,6 +186,8 @@ void Engine::draw()
 void Engine::GamеMenu()
 {
     sf::RenderWindow window(sf::VideoMode(1280, 720), L"Пчела на работе", sf::Style::Fullscreen);
+    window.requestFocus();
+    window.setActive(true);
     window.setMouseCursorVisible(false);
 
     std::vector<std::vector<sf::String>>name_menu{ { L"Игра",L"Настройки", L"Правила",L"Выход" },
@@ -196,17 +202,11 @@ void Engine::GamеMenu()
     mymenu.AlignMenu(2);
 
     sf::RectangleShape background(sf::Vector2f(1280, 720));
-    sf::Texture texture_window;
-    if (!texture_window.loadFromFile("image/bee1.jpg")) std::cout << "No image is here";
-    background.setTexture(&texture_window);
+        
+    background.setTexture(& AssetManager::GetTexture("image/bee1.jpg"));
 
     sf::Text Titul;
-    sf::Font font;
-    if (!font.loadFromFile("font/troika.otf"))
-    {
-        std::cout << "No font is here";
-    }
-    Titul.setFont(font);
+    Titul.setFont(AssetManager::GetFont("font/troika.otf"));
     game::TextFormat FText;
     FText.menu_text_color = sf::Color(227, 171, 0);
     InitText(Titul, 640 - (Titul.getLocalBounds().width / 2), 5, str[language], FText);
@@ -256,17 +256,16 @@ void Engine::GamеMenu()
 void Engine::Options()
 {
     sf::RenderWindow Options(sf::VideoMode(1280, 720), L"Настройки", sf::Style::Fullscreen);
-
+    Options.requestFocus();
     sf::RectangleShape background_opt(sf::Vector2f(1280, 720));
-    sf::Texture texture_opt;
+   
     bool switch_language = true; // Смена языка
     std::vector<sf::String> name_menu{ { L"-----",L"-----"} };
     
 
     bool onoff = gsound->getOnOffSound();
     
-    if (!texture_opt.loadFromFile("image/menu1.jpg")) std::cout << "No image is here";
-    background_opt.setTexture(&texture_opt);
+    background_opt.setTexture(&AssetManager::GetTexture("image/menu1.jpg"));
     
     // Объект меню
     game::GameMenu optmenu(Options, 640, 250, 80, 100, name_menu);
@@ -274,12 +273,8 @@ void Engine::Options()
     optmenu.setColorTextMenu(sf::Color::Cyan, sf::Color::Magenta, sf::Color::Black);
     optmenu.AlignMenu(2);
     sf::Text Titul;
-    sf::Font font;
-    if (!font.loadFromFile("font/troika.otf"))
-    {
-        std::cout << "No font is here";
-    }
-    Titul.setFont(font);
+   
+    Titul.setFont(AssetManager::GetFont("font/troika.otf"));
     game::TextFormat FText;
     FText.menu_text_color = sf::Color::Cyan;
     InitText(Titul, 640- (Titul.getLocalBounds().width/2), 5, L"Настройки", FText);
@@ -354,25 +349,19 @@ switch (language)
 void Engine::About_Game()
 {
     sf::RenderWindow About(sf::VideoMode(1280, 720), L"О игре", sf::Style::Fullscreen);
-
+    About.requestFocus();
     sf::RectangleShape background_ab(sf::Vector2f(1280, 720));
-    sf::Texture texture_ab;
-    sf::Texture texture_ab1;
-    sf::Texture texture_ab2;
-    if (!texture_ab.loadFromFile("image/menu2.jpg")) std::cout << "No image is here";
-    if (!texture_ab1.loadFromFile("image/menu21.jpg")) std::cout << "No image is here";
-    if (!texture_ab2.loadFromFile("image/menu22.jpg")) std::cout << "No image is here";
-
+    
     switch (language)
     {
     case 0:
-        background_ab.setTexture(&texture_ab);
+        background_ab.setTexture(&AssetManager::GetTexture("image/menu2.jpg"));
         break;
     case 1:
-        background_ab.setTexture(&texture_ab2);
+        background_ab.setTexture(&AssetManager::GetTexture("image/menu22.jpg"));
         break;
     case 2:
-        background_ab.setTexture(&texture_ab1);
+        background_ab.setTexture(& AssetManager::GetTexture("image/menu21.jpg"));
         break;
     default:
         break;
@@ -407,13 +396,8 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
     mymenu.AlignMenu(2);
 
     sf::Text Titul;
-    sf::Font font;
-
-    if (!font.loadFromFile("font/troika.otf"))
-    {
-        std::cout << "No font is here";
-    }
-    Titul.setFont(font);
+  
+    Titul.setFont(AssetManager::GetFont("font/troika.otf"));
     game::TextFormat FText;
     FText.size_font = 60;
     FText.menu_text_color = col;
@@ -475,13 +459,16 @@ void Engine::run()
 void Engine::resetBlob(size_t index)
 {
     std::uniform_int_distribution RndPosBlobX(350, 900);
-    std::uniform_int_distribution RndPosBlobY(0, 1000);
+    std::uniform_int_distribution RndPosBlobY(100, 1000);
     std::uniform_int_distribution RndPosBlobSize(1, 3);
+    
     float blodSize;
 
     if (!blob[index].getTexture()) blob[index].setTexture(&AssetManager::GetTexture("image/blob.png"));
     blodSize = static_cast<float>(RndPosBlobSize(rnd));
-    blob[index].setSize(sf::Vector2f(10.0f * blodSize, 20.0f * blodSize));
+    speedBlob[index] = blodSize;
+    if (blodSize == 3) blodSize=2.5;
+    blob[index].setSize(sf::Vector2f(15.0f * (blodSize), 30.0f * (blodSize)));
     blob[index].setPosition(static_cast<float>(RndPosBlobX(rnd)), static_cast<float>(RndPosBlobY(rnd) * -1));
 
 }

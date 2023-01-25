@@ -20,14 +20,14 @@ void HealthBarClass::changeOfbar(double size, sf::Time const& dt)
             if (size > 0)
             {
                 if (sizeBar >= 100) { sizeBar = 100; full = true; }
-                barHelth.setOrigin(0, sizeBar * divisionUnit);
-                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+                barHelth.setOrigin(0, static_cast<float>(sizeBar * divisionUnit));
+                barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar * divisionUnit)));
             }
             else
             {
                 if (sizeBar <= 0) { empty = true; sizeBar = 0; }
-                barHelth.setOrigin(0, sizeBar * divisionUnit);
-                barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+                barHelth.setOrigin(0, static_cast<float>(sizeBar * divisionUnit));
+                barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar * divisionUnit)));
             }
         }
         else
@@ -35,12 +35,12 @@ void HealthBarClass::changeOfbar(double size, sf::Time const& dt)
             if (size > 0)
             {
                 if (sizeBar >= 100) { sizeBar = 100; full = true; }
-                barHelth.setSize(sf::Vector2f(sizeBar * divisionUnit,thicknessBar));
+                barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar * divisionUnit),thicknessBar));
             }
             else
             {
                 if (sizeBar <= 0) { empty = true; sizeBar = 0; }
-                barHelth.setSize(sf::Vector2f(sizeBar * divisionUnit,thicknessBar ));
+                barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar * divisionUnit),thicknessBar ));
             }
         }
     
@@ -55,14 +55,14 @@ void HealthBarClass::changeOfbar(double size)
         if (size > 0)
         {    
             if (sizeBar >= 100) { sizeBar = 100; full = true; } 
-            barHelth.setOrigin(0, sizeBar * divisionUnit);
-            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            barHelth.setOrigin(0, static_cast<float>(sizeBar * divisionUnit));
+            barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar * divisionUnit)));
         }
         else
         {
             if (sizeBar <= 0) {empty = true; sizeBar = 0;}
-            barHelth.setOrigin(0, sizeBar * divisionUnit);
-            barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar * divisionUnit));
+            barHelth.setOrigin(0, static_cast<float>(sizeBar * divisionUnit));
+            barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar * divisionUnit)));
         }
     }
     else
@@ -70,19 +70,20 @@ void HealthBarClass::changeOfbar(double size)
         if (size > 0)
         {
             if (sizeBar >= 100) { sizeBar = 100; full = true; }
-            barHelth.setSize(sf::Vector2f(sizeBar * divisionUnit, thicknessBar));
+            barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar * divisionUnit), thicknessBar));
         }
         else
         {
             if (sizeBar <= 0) { empty = true; sizeBar = 0; }
-            barHelth.setSize(sf::Vector2f(sizeBar * divisionUnit, thicknessBar));
+            barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar * divisionUnit), thicknessBar));
         }
     }
 
 }
 
-void HealthBarClass::setColorBar(sf::Color ColorHelth, sf::Color ColorContainer, float Thickness) 
+void HealthBarClass::setColorBar(sf::Color myColorHelth, sf::Color ColorContainer, float Thickness) 
 {
+    this->ColorHelth = myColorHelth;
     barHelth.setFillColor(ColorHelth);
     container.setOutlineColor(ColorContainer);
     container.setOutlineThickness(Thickness);
@@ -97,12 +98,12 @@ void HealthBarClass::reset()
     if (resetBar == 0) empty = true; else empty = false;
     if (vert)
     {
-        barHelth.setOrigin(0, sizeBar* divisionUnit);
-        barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar* divisionUnit));
+        barHelth.setOrigin(0, static_cast<float>(sizeBar* divisionUnit));
+        barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar* divisionUnit)));
     }
     else
     {
-        barHelth.setSize(sf::Vector2f(sizeBar* divisionUnit, thicknessBar));
+        barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar* divisionUnit), thicknessBar));
     }
 }
 
@@ -112,11 +113,11 @@ void HealthBarClass::setSizeBar(float size)
     if (sizeBar == 0)  empty = true;
     if (vert)
     {
-        barHelth.setOrigin(0, sizeBar* divisionUnit);
-        barHelth.setSize(sf::Vector2f(thicknessBar, sizeBar* divisionUnit));
+        barHelth.setOrigin(0, static_cast<float>(sizeBar* divisionUnit));
+        barHelth.setSize(sf::Vector2f(thicknessBar, static_cast<float>(sizeBar* divisionUnit)));
     }
     else
     {
-        barHelth.setSize(sf::Vector2f(sizeBar* divisionUnit,thicknessBar));
+        barHelth.setSize(sf::Vector2f(static_cast<float>(sizeBar* divisionUnit),thicknessBar));
     }
 }

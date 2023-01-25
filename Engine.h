@@ -36,7 +36,7 @@ class Engine
 	sf::RectangleShape background_play= sf::RectangleShape(sf::Vector2f(1280, 720)); // Фон игры
 		
 	std::array<sf::RectangleShape, 20> blob;
-
+	std::array<float,20> speedBlob;
 	int language = 0;          // язык
     void GamеMenu();
 	void resetBlob(size_t index);

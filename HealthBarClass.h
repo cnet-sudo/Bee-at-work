@@ -16,6 +16,7 @@ class HealthBarClass
     bool full=false;              // Наполнение
     bool empty=true;              // Наполнение
     float resetBar;
+    sf::Color ColorHelth = sf::Color::Red;      // Цвет полосы жизни
 public:
 
     HealthBarClass(sf::RenderWindow & window, float x, float y, bool vertical, float sizeBar = 0.0f, float thicknessBar = 25.0f, float divisionUnit=1.0f)
@@ -25,7 +26,7 @@ public:
         if (sizeBar == 100) full = true;
         resetBar = sizeBar;
         barHelth.setPosition(xpos, ypos);
-        barHelth.setFillColor(sf::Color::Red);
+        barHelth.setFillColor(ColorHelth);
         container.setPosition(xpos, ypos);
         container.setFillColor(sf::Color(255, 255, 255, 0));
         container.setOutlineColor(sf::Color::Black);
@@ -56,6 +57,11 @@ public:
     double getSizeBar() const {
     return sizeBar;
      }
+
+    sf::Color getColorHelth() const
+    {
+        return ColorHelth;
+    }
 
     void changeOfbar(double size, sf::Time const& dt);   // Изменение наполнения полосы
     void changeOfbar(double size);
