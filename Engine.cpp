@@ -64,7 +64,7 @@ void Engine::update(sf::Time const& deltaTime)
 {
     auto SPBee = Bee->getBee();  // Ссылка на спрайт пчелы
 
-    barTime.changeOfbar(-0.05, deltaTime);  // Время игры
+    barTime.changeOfbar(-0.005, deltaTime);  // Время игры
     
     auto sizeBarTime = barTime.getSizeBar();
     if (sizeBarTime <25 && barTime.getColorHelth() != sf::Color::Red) barTime.setColorBar(sf::Color::Red, sf::Color(158, 63, 25), 3);
