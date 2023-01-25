@@ -96,7 +96,8 @@ void Engine::update(sf::Time const& deltaTime)
             {
                 gsound->stop(0);
                 gsound->stop(1);
-                if (GamеEndMenu(L"Вы выиграли !!!", sf::Color::Magenta))
+                
+                if (GamеEndMenu(strgameEnd[0][language], sf::Color::Magenta))
                 {
                     resetGame();
                     gsound->play(0);
@@ -387,10 +388,10 @@ void Engine::About_Game()
 
 bool Engine::GamеEndMenu(sf::String str, sf::Color col)
 {
-    std::vector<sf::String> name_menu{ { L"Рестарт",L"Выход"} };
+    std::vector<std::vector<sf::String>> name_menu{ {{ L"Рестарт",L"Выход"},{ L"Рестарт",L"Вихід"},{ L"Restart",L"Exit"} } };
 
     // Объект меню
-    game::GameMenu mymenu(*window, static_cast<float>(window->getSize().x / 2), 300, 45, 90, name_menu);
+    game::GameMenu mymenu(*window, static_cast<float>(window->getSize().x / 2), 300, 45, 90, name_menu[language]);
     // Установка цвета отображения меню
     mymenu.setColorTextMenu(sf::Color(227, 171, 0), sf::Color::Yellow, sf::Color::Black);
     mymenu.AlignMenu(2);
@@ -401,8 +402,9 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
     game::TextFormat FText;
     FText.size_font = 60;
     FText.menu_text_color = col;
-    InitText(Titul, 400, 200, str, FText);
-
+    FText.border_color = sf::Color::White;
+    InitText(Titul, 640 - (Titul.getLocalBounds().width / 2), 200, str, FText);
+    Titul.setPosition(640 - (Titul.getLocalBounds().width / 2), 200);
     while (window->isOpen())
     {
         sf::Event event;
@@ -432,7 +434,7 @@ bool Engine::GamеEndMenu(sf::String str, sf::Color col)
 void Engine::Lost()
 {
     gsound->stop(0);
-    if (GamеEndMenu(L"Вы проиграли !!!", sf::Color::Red))
+    if (GamеEndMenu(strgameEnd[1][language], sf::Color::Black))
     {
         gsound->play(0);
         resetGame();

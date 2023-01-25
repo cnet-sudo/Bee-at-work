@@ -34,7 +34,7 @@ class Engine
 	
 	
 	sf::RectangleShape background_play= sf::RectangleShape(sf::Vector2f(1280, 720)); // ‘он игры
-		
+	std::array<std::array<sf::String, 3>, 2> strgameEnd{ {{L"—пасибо за мЄд !!!",L"ƒ€куЇмо за мед !!!",L"Thanks for the honey !!!"} ,{L"”лей погиб !",L"¬улик загинув !",L"The hive died !!!"}} };
 	std::array<sf::RectangleShape, 20> blob;
 	std::array<float,20> speedBlob;
 	int language = 0;          // €зык
@@ -45,7 +45,7 @@ class Engine
 	void input();
 	void update(sf::Time const& deltaTime);
 	void draw();
-
+	
 	
 	void Options();
 	void About_Game();
