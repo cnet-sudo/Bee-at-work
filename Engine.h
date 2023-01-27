@@ -36,7 +36,7 @@ class Engine
 	sf::RectangleShape background_play= sf::RectangleShape(sf::Vector2f(1280, 720)); // ‘он игры
 	std::array<std::array<sf::String, 3>, 2> strgameEnd{ {{L"—пасибо за мЄд !!!",L"ƒ€куЇмо за мед !!!",L"Thanks for the honey !!!"} ,{L"”лей погиб !",L"¬улик загинув !",L"The hive died !!!"}} };
 	std::array<sf::RectangleShape, 20> blob;
-	std::array<float,20> speedBlob;
+	std::array<float, 20> speedBlob{0};
 	int language = 0;          // €зык
     void GamеMenu();
 	void resetBlob(size_t index);
@@ -52,9 +52,11 @@ class Engine
 	bool GamеEndMenu(sf::String str, sf::Color col);
 	void Lost();
 public:
+	
 	Engine()
 	{
-		this->window->setMouseCursorVisible(false);
+		background_play.setTexture(&AssetManager::GetTexture("image/background.jpg"));
+		window->setMouseCursorVisible(false);
 		flowers.setRadius(50);
 		flowers.setPosition(1050, 230);
 		flowers.setFillColor(sf::Color(255, 255, 255, 0));
@@ -64,7 +66,7 @@ public:
 		beehive.setFillColor(sf::Color(255, 255, 255, 0));
 		barBeehive.setColorBar(sf::Color(216, 212, 0), sf::Color(189, 116, 0), 3);
 		barBeehive2.setColorBar(sf::Color(0, 189, 0), sf::Color(189, 116, 0), 3);	
-		background_play.setTexture(&AssetManager::GetTexture("image/background.jpg"));
+		
 		for (size_t i = 0; i < size(blob); i++) resetBlob(i);		
 }
 

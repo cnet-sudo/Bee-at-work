@@ -1,5 +1,4 @@
 #include "AssetManager.h"
-#include <assert.h>
 
 AssetManager* AssetManager::sInstance = nullptr;
 

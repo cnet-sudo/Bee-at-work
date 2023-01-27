@@ -1,7 +1,7 @@
-#ifndef ASSET_MANAGER_H
-#define ASSET_MANAGER_H
+#pragma once
 #include<SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <assert.h>
 #include<map>
 
 
@@ -24,4 +24,3 @@ private:
 	static AssetManager* sInstance;
 };
 
-#endif
